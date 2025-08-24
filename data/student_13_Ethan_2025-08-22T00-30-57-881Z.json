@@ -1,0 +1,782 @@
+{
+  "student_info": {
+    "id": 13,
+    "name": "Ethan",
+    "email": "ethan8eight@gmail.com",
+    "session_date": "2025-08-22T00:30:57.881Z",
+    "total_conversation_turns": 11
+  },
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "My GPA is 4.0 "
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent GPA. What are your SAT/ACT scores?"
+    },
+    {
+      "role": "user",
+      "content": "1530 My SAT is "
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive SAT score. What grade are you in?"
+    },
+    {
+      "role": "user",
+      "content": "I'm in grade 12 (a rising senior)"
+    },
+    {
+      "role": "assistant",
+      "content": "Understood, you're a rising senior. What state/country do you live in?"
+    },
+    {
+      "role": "user",
+      "content": "Canada I'm from BC Canada"
+    },
+    {
+      "role": "assistant",
+      "content": "Understood, you're from BC, Canada. What extracurriculars are you currently involved in? (List them briefly)"
+    },
+    {
+      "role": "user",
+      "content": "My main ECs are in bioinformatics, I intern at a lab and wrote my own paper"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive extracurriculars. What awards or recognition have you received? (List them briefly)"
+    },
+    {
+      "role": "user",
+      "content": "I won a minor regional award but nothing much. I have co-authorship in a university paper though"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive achievements. What subjects are you most interested in? (List top 3)"
+    },
+    {
+      "role": "user",
+      "content": "I'd say I might be interested in becoming a doctor? But I am mainly interested in bioinformatics and pharmacology"
+    },
+    {
+      "role": "assistant",
+      "content": "Interesting career interests. Do you have any research experience? If yes, describe briefly."
+    },
+    {
+      "role": "user",
+      "content": "Right now, my main research experience is with the UBC Labrotory of Drug Deliver and NanoMedicine I have also written and published my own research paper with JEI"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive research experience. Do you have any coding/programming experience? If yes, describe briefly."
+    },
+    {
+      "role": "user",
+      "content": "Yes, I also have a businesses and code fullstack on many projects. I also have an internship at a YC company in SWE "
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive experience. What career field are you most interested in?"
+    },
+    {
+      "role": "user",
+      "content": "I'm manually interested in medical field but might also explore CS / AI?"
+    },
+    {
+      "role": "assistant",
+      "content": "Interesting interests. What's your biggest academic or career goal right now?"
+    },
+    {
+      "role": "user",
+      "content": "Definitely getting into a T20 US schools like John Hopkins or Stanford"
+    },
+    {
+      "role": "assistant",
+      "content": "Ambitious goals. Profile assessment complete! Type 'extract data' to save everything."
+    }
+  ],
+  "extracted_data_history": [
+    {
+      "timestamp": "2025-08-22T00:27:29.641Z",
+      "question": "What's your current GPA? (e.g., 3.8)",
+      "user_input": "My GPA is 4.0 ",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:27:37.397Z",
+      "question": "What are your SAT/ACT scores? (e.g., SAT 1450, ACT 32)",
+      "user_input": "1530 My SAT is ",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "sat_improvement",
+            "percentage": 100,
+            "confidence": 100
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:27:51.807Z",
+      "question": "What grade are you in? (e.g., 11th grade)",
+      "user_input": "I'm in grade 12 (a rising senior)",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "college_apps_submit",
+            "percentage": 90,
+            "confidence": 85
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "essays_complete",
+            "percentage": 80,
+            "confidence": 75
+          },
+          {
+            "category_name": "recommendation_letters",
+            "percentage": 80,
+            "confidence": 75
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:27:59.798Z",
+      "question": "What state/country do you live in?",
+      "user_input": "Canada I'm from BC Canada",
+      "extracted_data": {}
+    },
+    {
+      "timestamp": "2025-08-22T00:28:20.010Z",
+      "question": "What extracurriculars are you currently involved in? (List them briefly)",
+      "user_input": "My main ECs are in bioinformatics, I intern at a lab and wrote my own paper",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "research_publication",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "lab_experience",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "internship_secure",
+            "percentage": 100,
+            "confidence": 100
+          },
+          {
+            "category_name": "research_project",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "data_science",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "biotechnology",
+            "percentage": 85,
+            "confidence": 90
+          },
+          {
+            "category_name": "data_science",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:28:38.769Z",
+      "question": "What awards or recognition have you received? (List them briefly)",
+      "user_input": "I won a minor regional award but nothing much. I have co-authorship in a university paper though",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "research_publication",
+            "percentage": 80,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "academic_awards",
+            "percentage": 50,
+            "confidence": 70
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "scientific_writing",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:29:16.972Z",
+      "question": "What subjects are you most interested in? (List top 3)",
+      "user_input": "I'd say I might be interested in becoming a doctor? But I am mainly interested in bioinformatics and pharmacology",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 50,
+            "confidence": 60
+          },
+          {
+            "category_name": "biomedical_engineering",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ],
+        "intermediate_milestones": [],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "computer_science",
+            "percentage": 70,
+            "confidence": 75
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 50,
+            "confidence": 60
+          },
+          {
+            "category_name": "biotechnology",
+            "percentage": 70,
+            "confidence": 80
+          },
+          {
+            "category_name": "pharmaceutical",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:29:48.304Z",
+      "question": "Do you have any research experience? If yes, describe briefly.",
+      "user_input": "Right now, my main research experience is with the UBC Labrotory of Drug Deliver and NanoMedicine I have also written and published my own research paper with JEI",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "research_career_start",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "research_project",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "research_publication",
+            "percentage": 100,
+            "confidence": 100
+          },
+          {
+            "category_name": "lab_experience",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "scientific_method",
+            "percentage": 85,
+            "confidence": 90
+          },
+          {
+            "category_name": "experimental_design",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "scientific_writing",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "biomedical_engineering",
+            "percentage": 75,
+            "confidence": 80
+          },
+          {
+            "category_name": "biotechnology",
+            "percentage": 75,
+            "confidence": 80
+          },
+          {
+            "category_name": "pharmaceutical",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:30:15.583Z",
+      "question": "Do you have any coding/programming experience? If yes, describe briefly.",
+      "user_input": "Yes, I also have a businesses and code fullstack on many projects. I also have an internship at a YC company in SWE ",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "startup_founding",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "tech_industry_entry",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "internship_secure",
+            "percentage": 100,
+            "confidence": 100
+          },
+          {
+            "category_name": "coding_proficiency",
+            "percentage": 90,
+            "confidence": 90
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "programming_languages",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "web_development",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "computer_science",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "entrepreneurship_field",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:30:36.604Z",
+      "question": "What career field are you most interested in?",
+      "user_input": "I'm manually interested in medical field but might also explore CS / AI?",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 70,
+            "confidence": 80
+          },
+          {
+            "category_name": "tech_industry_entry",
+            "percentage": 50,
+            "confidence": 60
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "computer_science",
+            "percentage": 50,
+            "confidence": 60
+          },
+          {
+            "category_name": "ai_machine_learning",
+            "percentage": 50,
+            "confidence": 60
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 70,
+            "confidence": 80
+          },
+          {
+            "category_name": "artificial_intelligence",
+            "percentage": 50,
+            "confidence": 60
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:30:53.015Z",
+      "question": "What's your biggest academic or career goal right now?",
+      "user_input": "Definitely getting into a T20 US schools like John Hopkins or Stanford",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ]
+      }
+    }
+  ],
+  "student_profile": {
+    "demographics": {
+      "location": "Canada I'm from BC Canada"
+    },
+    "academics": {
+      "gpa": "My GPA is 4.0 ",
+      "test_scores": "1530 My SAT is ",
+      "grade": "I'm in grade 12 (a rising senior)"
+    },
+    "extracurriculars": [
+      "My main ECs are in bioinformatics",
+      "I intern at a lab and wrote my own paper"
+    ],
+    "awards": [
+      "I won a minor regional award but nothing much. I have co-authorship in a university paper though"
+    ],
+    "interests": [
+      "I'd say I might be interested in becoming a doctor? But I am mainly interested in bioinformatics and pharmacology"
+    ],
+    "progress": {
+      "research_experience": "Right now, my main research experience is with the UBC Labrotory of Drug Deliver and NanoMedicine I have also written and published my own research paper with JEI",
+      "coding_experience": "Yes, I also have a businesses and code fullstack on many projects. I also have an internship at a YC company in SWE "
+    },
+    "goals": {
+      "primary_goal": "Definitely getting into a T20 US schools like John Hopkins or Stanford"
+    }
+  },
+  "database_data": {
+    "milestone_goals": [
+      {
+        "id": 50,
+        "student_id": 13,
+        "category_name": "competitive_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:27:32.715149"
+      },
+      {
+        "id": 54,
+        "student_id": 13,
+        "category_name": "college_apps_submit",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:27:54.602484"
+      },
+      {
+        "id": 56,
+        "student_id": 13,
+        "category_name": "lab_experience",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:28:22.997077"
+      },
+      {
+        "id": 55,
+        "student_id": 13,
+        "category_name": "research_publication",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:28:22.802608"
+      },
+      {
+        "id": 59,
+        "student_id": 13,
+        "category_name": "biomedical_engineering",
+        "percentage": 70,
+        "updated_at": "2025-08-22T00:29:20.058243"
+      },
+      {
+        "id": 60,
+        "student_id": 13,
+        "category_name": "research_career_start",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:29:51.095854"
+      },
+      {
+        "id": 61,
+        "student_id": 13,
+        "category_name": "startup_founding",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:30:18.389205"
+      },
+      {
+        "id": 58,
+        "student_id": 13,
+        "category_name": "medical_school_path",
+        "percentage": 70,
+        "updated_at": "2025-08-22T00:29:19.860573"
+      },
+      {
+        "id": 62,
+        "student_id": 13,
+        "category_name": "tech_industry_entry",
+        "percentage": 50,
+        "updated_at": "2025-08-22T00:30:18.594681"
+      },
+      {
+        "id": 51,
+        "student_id": 13,
+        "category_name": "top_20_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:27:32.911332"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 38,
+        "student_id": 13,
+        "category_name": "sat_improvement",
+        "percentage": 100,
+        "updated_at": "2025-08-22T00:27:40.576895"
+      },
+      {
+        "id": 39,
+        "student_id": 13,
+        "category_name": "essays_complete",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:27:54.754924"
+      },
+      {
+        "id": 40,
+        "student_id": 13,
+        "category_name": "recommendation_letters",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:27:54.918098"
+      },
+      {
+        "id": 41,
+        "student_id": 13,
+        "category_name": "internship_secure",
+        "percentage": 100,
+        "updated_at": "2025-08-22T00:28:23.118784"
+      },
+      {
+        "id": 42,
+        "student_id": 13,
+        "category_name": "research_project",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:28:23.244339"
+      },
+      {
+        "id": 43,
+        "student_id": 13,
+        "category_name": "academic_awards",
+        "percentage": 50,
+        "updated_at": "2025-08-22T00:28:41.742254"
+      },
+      {
+        "id": 45,
+        "student_id": 13,
+        "category_name": "research_publication",
+        "percentage": 100,
+        "updated_at": "2025-08-22T00:29:51.4217"
+      },
+      {
+        "id": 46,
+        "student_id": 13,
+        "category_name": "lab_experience",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:29:51.991415"
+      },
+      {
+        "id": 48,
+        "student_id": 13,
+        "category_name": "coding_proficiency",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:30:18.921203"
+      }
+    ],
+    "skills": [
+      {
+        "id": 37,
+        "student_id": 13,
+        "category_name": "biology_mastery",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:28:23.388186"
+      },
+      {
+        "id": 38,
+        "student_id": 13,
+        "category_name": "data_science",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:28:23.512454"
+      },
+      {
+        "id": 39,
+        "student_id": 13,
+        "category_name": "scientific_writing",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:28:41.858312"
+      },
+      {
+        "id": 41,
+        "student_id": 13,
+        "category_name": "computer_science",
+        "percentage": 50,
+        "updated_at": "2025-08-22T00:29:20.339628"
+      },
+      {
+        "id": 42,
+        "student_id": 13,
+        "category_name": "scientific_method",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:29:52.152062"
+      },
+      {
+        "id": 43,
+        "student_id": 13,
+        "category_name": "experimental_design",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:29:52.297486"
+      },
+      {
+        "id": 45,
+        "student_id": 13,
+        "category_name": "programming_languages",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:30:19.050036"
+      },
+      {
+        "id": 46,
+        "student_id": 13,
+        "category_name": "web_development",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:30:19.167747"
+      },
+      {
+        "id": 48,
+        "student_id": 13,
+        "category_name": "ai_machine_learning",
+        "percentage": 50,
+        "updated_at": "2025-08-22T00:30:39.918481"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 36,
+        "student_id": 13,
+        "category_name": "biotechnology",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:28:23.65337"
+      },
+      {
+        "id": 37,
+        "student_id": 13,
+        "category_name": "data_science",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:28:23.785686"
+      },
+      {
+        "id": 38,
+        "student_id": 13,
+        "category_name": "medicine_clinical",
+        "percentage": 70,
+        "updated_at": "2025-08-22T00:29:20.479463"
+      },
+      {
+        "id": 40,
+        "student_id": 13,
+        "category_name": "pharmaceutical",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:29:20.715607"
+      },
+      {
+        "id": 41,
+        "student_id": 13,
+        "category_name": "biomedical_engineering",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:29:52.571957"
+      },
+      {
+        "id": 44,
+        "student_id": 13,
+        "category_name": "computer_science",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:30:19.316789"
+      },
+      {
+        "id": 45,
+        "student_id": 13,
+        "category_name": "entrepreneurship_field",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:30:19.468881"
+      },
+      {
+        "id": 47,
+        "student_id": 13,
+        "category_name": "artificial_intelligence",
+        "percentage": 50,
+        "updated_at": "2025-08-22T00:30:40.207525"
+      }
+    ]
+  },
+  "summary": {
+    "total_categories_identified": 36,
+    "conversation_length": 22,
+    "data_extraction_events": 11
+  }
+}

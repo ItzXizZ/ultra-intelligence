@@ -1,0 +1,135 @@
+{
+  "student_info": {
+    "id": 11,
+    "name": "Ethan ",
+    "email": "ethan8eight@gmail.com",
+    "session_date": "2025-08-22T00:25:05.246Z",
+    "total_conversation_turns": 3
+  },
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "My current GPA is 4.0 "
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive GPA. What are your SAT/ACT scores?"
+    },
+    {
+      "role": "user",
+      "content": "Right now it's a 1530"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive score. What grade are you in?"
+    },
+    {
+      "role": "user",
+      "content": ""
+    },
+    {
+      "role": "assistant",
+      "content": "Understood. What state/country do you live in?"
+    }
+  ],
+  "extracted_data_history": [
+    {
+      "timestamp": "2025-08-22T00:22:13.303Z",
+      "question": "What's your current GPA? (e.g., 3.8)",
+      "user_input": "My current GPA is 4.0 ",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:22:22.521Z",
+      "question": "What are your SAT/ACT scores? (e.g., SAT 1450, ACT 32)",
+      "user_input": "Right now it's a 1530",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "sat_improvement",
+            "percentage": 95,
+            "confidence": 100
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:24:59.152Z",
+      "question": "What grade are you in? (e.g., 11th grade)",
+      "user_input": "",
+      "extracted_data": {}
+    }
+  ],
+  "student_profile": {
+    "demographics": {},
+    "academics": {
+      "gpa": "My current GPA is 4.0 ",
+      "test_scores": "Right now it's a 1530",
+      "grade": ""
+    },
+    "extracurriculars": [],
+    "awards": [],
+    "interests": [],
+    "progress": {},
+    "goals": {}
+  },
+  "database_data": {
+    "milestone_goals": [
+      {
+        "id": 46,
+        "student_id": 11,
+        "category_name": "competitive_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:22:16.155357"
+      },
+      {
+        "id": 47,
+        "student_id": 11,
+        "category_name": "top_20_university_acceptance",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:22:16.401742"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 37,
+        "student_id": 11,
+        "category_name": "sat_improvement",
+        "percentage": 95,
+        "updated_at": "2025-08-22T00:22:25.73898"
+      }
+    ],
+    "skills": [],
+    "sectors": []
+  },
+  "summary": {
+    "total_categories_identified": 3,
+    "conversation_length": 6,
+    "data_extraction_events": 3
+  }
+}

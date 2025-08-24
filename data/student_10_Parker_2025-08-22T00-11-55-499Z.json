@@ -1,0 +1,652 @@
+{
+  "student_info": {
+    "id": 10,
+    "name": "Parker",
+    "email": "parker@gmail.com",
+    "session_date": "2025-08-22T00:11:55.499Z",
+    "total_conversation_turns": 11
+  },
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "My current GPA is 4.0"
+    },
+    {
+      "role": "assistant",
+      "content": "Excellent GPA. What are your SAT/ACT scores?"
+    },
+    {
+      "role": "user",
+      "content": "My sat score is a 1530"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive SAT score. What grade are you in?"
+    },
+    {
+      "role": "user",
+      "content": "I'm in grade 11 right now"
+    },
+    {
+      "role": "assistant",
+      "content": "Understood. What state/country do you live in?"
+    },
+    {
+      "role": "user",
+      "content": "I like in British Columbia Canada"
+    },
+    {
+      "role": "assistant",
+      "content": "Great, you're from British Columbia. What extracurriculars are you currently involved in? (List them briefly)"
+    },
+    {
+      "role": "user",
+      "content": "Currently I do research, have an internship and run my school's biology club"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive involvement. What awards or recognition have you received? (List them briefly)"
+    },
+    {
+      "role": "user",
+      "content": "I qualifed for the USABO semifinal and I also am co-author  in a uni level paper for my volunteer work"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive achievements. What subjects are you most interested in? (List top 3)"
+    },
+    {
+      "role": "user",
+      "content": "Overall i'm really interested in medicine and biology and anatonomy I probably want to become a doctor actually and go down the medical path way (pretty set on that)"
+    },
+    {
+      "role": "assistant",
+      "content": "Great career choice. Do you have any research experience? If yes, describe briefly."
+    },
+    {
+      "role": "user",
+      "content": "I wrote my own paper about drug science I"
+    },
+    {
+      "role": "assistant",
+      "content": "Impressive research. Do you have any coding/programming experience? If yes, describe briefly."
+    },
+    {
+      "role": "user",
+      "content": "no not really no"
+    },
+    {
+      "role": "assistant",
+      "content": "Understood. What career field are you most interested in?"
+    },
+    {
+      "role": "user",
+      "content": "I want to be a doctor or medical researcher"
+    },
+    {
+      "role": "assistant",
+      "content": "Ambitious career choices. What's your biggest academic or career goal right now?"
+    },
+    {
+      "role": "user",
+      "content": "want to get into a good university my dream school is John HopkinsI "
+    },
+    {
+      "role": "assistant",
+      "content": "John Hopkins is a great choice. Profile assessment complete! Type 'extract data' to save everything."
+    }
+  ],
+  "extracted_data_history": [
+    {
+      "timestamp": "2025-08-22T00:08:07.883Z",
+      "question": "What's your current GPA? (e.g., 3.8)",
+      "user_input": "My current GPA is 4.0",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "gpa_improvement",
+            "percentage": 100,
+            "confidence": 100
+          }
+        ],
+        "skills": [],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:08:19.546Z",
+      "question": "What are your SAT/ACT scores? (e.g., SAT 1450, ACT 32)",
+      "user_input": "My sat score is a 1530",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "sat_improvement",
+            "percentage": 100,
+            "confidence": 100
+          }
+        ],
+        "skills": [],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:08:30.745Z",
+      "question": "What grade are you in? (e.g., 11th grade)",
+      "user_input": "I'm in grade 11 right now",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "college_apps_submit",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ],
+        "intermediate_milestones": [],
+        "skills": [],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:09:39.476Z",
+      "question": "What extracurriculars are you currently involved in? (List them briefly)",
+      "user_input": "Currently I do research, have an internship and run my school's biology club",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "research_career_start",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "workforce_entry",
+            "percentage": 70,
+            "confidence": 75
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "research_project",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "internship_secure",
+            "percentage": 100,
+            "confidence": 100
+          },
+          {
+            "category_name": "leadership_position",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "team_leadership",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "biomedical_engineering",
+            "percentage": 70,
+            "confidence": 75
+          },
+          {
+            "category_name": "biotechnology",
+            "percentage": 65,
+            "confidence": 70
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:10:12.603Z",
+      "question": "What awards or recognition have you received? (List them briefly)",
+      "user_input": "I qualifed for the USABO semifinal and I also am co-author  in a uni level paper for my volunteer work",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 85,
+            "confidence": 90
+          },
+          {
+            "category_name": "research_career_start",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "academic_awards",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "research_publication",
+            "percentage": 85,
+            "confidence": 90
+          },
+          {
+            "category_name": "volunteer_hours",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "scientific_writing",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_research",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "biotechnology",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:10:46.060Z",
+      "question": "What subjects are you most interested in? (List top 3)",
+      "user_input": "Overall i'm really interested in medicine and biology and anatonomy I probably want to become a doctor actually and go down the medical path way (pretty set on that)",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "intermediate_milestones": [],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:11:02.254Z",
+      "question": "Do you have any research experience? If yes, describe briefly.",
+      "user_input": "I wrote my own paper about drug science I",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "research_career_start",
+            "percentage": 60,
+            "confidence": 70
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "research_project",
+            "percentage": 80,
+            "confidence": 90
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "scientific_writing",
+            "percentage": 70,
+            "confidence": 80
+          },
+          {
+            "category_name": "literature_review",
+            "percentage": 60,
+            "confidence": 70
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "pharmaceutical",
+            "percentage": 65,
+            "confidence": 75
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:11:31.941Z",
+      "question": "What career field are you most interested in?",
+      "user_input": "I want to be a doctor or medical researcher",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "workforce_entry",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ],
+        "intermediate_milestones": [],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 85,
+            "confidence": 90
+          },
+          {
+            "category_name": "chemistry_mastery",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "medicine_research",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T00:11:48.816Z",
+      "question": "What's your biggest academic or career goal right now?",
+      "user_input": "want to get into a good university my dream school is John HopkinsI ",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 85
+          },
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 90,
+            "confidence": 85
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "college_apps_submit",
+            "percentage": 80,
+            "confidence": 75
+          }
+        ],
+        "skills": [],
+        "sectors": []
+      }
+    }
+  ],
+  "student_profile": {
+    "demographics": {
+      "location": "I like in British Columbia Canada"
+    },
+    "academics": {
+      "gpa": "My current GPA is 4.0",
+      "test_scores": "My sat score is a 1530",
+      "grade": "I'm in grade 11 right now"
+    },
+    "extracurriculars": [
+      "Currently I do research",
+      "have an internship and run my school's biology club"
+    ],
+    "awards": [
+      "I qualifed for the USABO semifinal and I also am co-author  in a uni level paper for my volunteer work"
+    ],
+    "interests": [
+      "Overall i'm really interested in medicine and biology and anatonomy I probably want to become a doctor actually and go down the medical path way (pretty set on that)"
+    ],
+    "progress": {
+      "research_experience": "I wrote my own paper about drug science I",
+      "coding_experience": "no not really no"
+    },
+    "goals": {
+      "primary_goal": "want to get into a good university my dream school is John HopkinsI "
+    }
+  },
+  "database_data": {
+    "milestone_goals": [
+      {
+        "id": 31,
+        "student_id": 10,
+        "category_name": "competitive_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:08:10.757074"
+      },
+      {
+        "id": 32,
+        "student_id": 10,
+        "category_name": "top_20_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:08:10.978431"
+      },
+      {
+        "id": 35,
+        "student_id": 10,
+        "category_name": "college_apps_submit",
+        "percentage": 70,
+        "updated_at": "2025-08-22T00:08:33.609314"
+      },
+      {
+        "id": 36,
+        "student_id": 10,
+        "category_name": "research_career_start",
+        "percentage": 60,
+        "updated_at": "2025-08-22T00:09:42.421813"
+      },
+      {
+        "id": 37,
+        "student_id": 10,
+        "category_name": "workforce_entry",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:09:42.803307"
+      },
+      {
+        "id": 40,
+        "student_id": 10,
+        "category_name": "medical_school_path",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:10:48.911336"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 27,
+        "student_id": 10,
+        "category_name": "gpa_improvement",
+        "percentage": 100,
+        "updated_at": "2025-08-22T00:08:11.304148"
+      },
+      {
+        "id": 28,
+        "student_id": 10,
+        "category_name": "sat_improvement",
+        "percentage": 100,
+        "updated_at": "2025-08-22T00:08:22.92724"
+      },
+      {
+        "id": 29,
+        "student_id": 10,
+        "category_name": "research_project",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:09:43.026702"
+      },
+      {
+        "id": 30,
+        "student_id": 10,
+        "category_name": "internship_secure",
+        "percentage": 100,
+        "updated_at": "2025-08-22T00:09:43.160164"
+      },
+      {
+        "id": 31,
+        "student_id": 10,
+        "category_name": "leadership_position",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:09:43.304895"
+      },
+      {
+        "id": 32,
+        "student_id": 10,
+        "category_name": "academic_awards",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:10:15.819718"
+      },
+      {
+        "id": 33,
+        "student_id": 10,
+        "category_name": "research_publication",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:10:15.975878"
+      },
+      {
+        "id": 34,
+        "student_id": 10,
+        "category_name": "volunteer_hours",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:10:16.085765"
+      },
+      {
+        "id": 36,
+        "student_id": 10,
+        "category_name": "college_apps_submit",
+        "percentage": 80,
+        "updated_at": "2025-08-22T00:11:52.499639"
+      }
+    ],
+    "skills": [
+      {
+        "id": 28,
+        "student_id": 10,
+        "category_name": "biology_mastery",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:09:43.438875"
+      },
+      {
+        "id": 29,
+        "student_id": 10,
+        "category_name": "team_leadership",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:09:43.562824"
+      },
+      {
+        "id": 31,
+        "student_id": 10,
+        "category_name": "scientific_writing",
+        "percentage": 70,
+        "updated_at": "2025-08-22T00:10:16.370957"
+      },
+      {
+        "id": 34,
+        "student_id": 10,
+        "category_name": "literature_review",
+        "percentage": 60,
+        "updated_at": "2025-08-22T00:11:05.851702"
+      },
+      {
+        "id": 36,
+        "student_id": 10,
+        "category_name": "chemistry_mastery",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:11:35.37381"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 28,
+        "student_id": 10,
+        "category_name": "biomedical_engineering",
+        "percentage": 70,
+        "updated_at": "2025-08-22T00:09:43.66949"
+      },
+      {
+        "id": 29,
+        "student_id": 10,
+        "category_name": "biotechnology",
+        "percentage": 75,
+        "updated_at": "2025-08-22T00:09:43.775723"
+      },
+      {
+        "id": 30,
+        "student_id": 10,
+        "category_name": "medicine_research",
+        "percentage": 85,
+        "updated_at": "2025-08-22T00:10:16.553608"
+      },
+      {
+        "id": 32,
+        "student_id": 10,
+        "category_name": "medicine_clinical",
+        "percentage": 90,
+        "updated_at": "2025-08-22T00:10:49.313476"
+      },
+      {
+        "id": 33,
+        "student_id": 10,
+        "category_name": "pharmaceutical",
+        "percentage": 65,
+        "updated_at": "2025-08-22T00:11:06.003986"
+      }
+    ]
+  },
+  "summary": {
+    "total_categories_identified": 25,
+    "conversation_length": 22,
+    "data_extraction_events": 9
+  }
+}

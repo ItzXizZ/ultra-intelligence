@@ -1,0 +1,791 @@
+{
+  "student_info": {
+    "id": 19,
+    "name": "Jennifer",
+    "email": "jennifer1231@gmail.com",
+    "session_date": "2025-08-22T19:19:59.720Z",
+    "total_conversation_turns": 15
+  },
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": ""
+    },
+    {
+      "role": "assistant",
+      "content": "That's fantastic! Can you share with me your biggest professional goal for the next 5-10 years?"
+    },
+    {
+      "role": "user",
+      "content": "I want to become a doctor"
+    },
+    {
+      "role": "assistant",
+      "content": "Becoming a doctor is a noble ambition! What steps are you taking in high school to prepare for a career in medicine?"
+    },
+    {
+      "role": "user",
+      "content": "I have conducted my own research and published to the JOURNAL OF EMERGING INVESTIGATORS!"
+    },
+    {
+      "role": "assistant",
+      "content": "Publishing your own research is a significant achievement! Are there any other scientific journals or conferences where you're planning to submit your future research?"
+    },
+    {
+      "role": "user",
+      "content": "not really I don't really know what to do next? Maybe intern idk?"
+    },
+    {
+      "role": "assistant",
+      "content": "Feeling unsure about the next steps is completely normal. Have you considered what type of internship would align with your interest in medicine?"
+    },
+    {
+      "role": "user",
+      "content": "I'm contemplating cold emailing a bunch of labs in my area"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a proactive approach! What specific research areas are you hoping to explore in these labs?"
+    },
+    {
+      "role": "user",
+      "content": "Drug Science Pharmacology and Bioinformatics"
+    },
+    {
+      "role": "assistant",
+      "content": "That's an interesting combination of fields! What are your long-term career goals in drug science, pharmacology, and bioinformatics?"
+    },
+    {
+      "role": "user",
+      "content": "Well mainly I just want to be a doctor, I'm pretty darn set on that"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a great ambition! What steps are you planning to take in high school to prepare for a career in medicine?"
+    },
+    {
+      "role": "user",
+      "content": "you just asked me that?"
+    },
+    {
+      "role": "assistant",
+      "content": "My apologies for any confusion. Let's shift focus a bit - have you considered any volunteer work or community service related to medical field?"
+    },
+    {
+      "role": "user",
+      "content": "no I haven't though I might want to do that in the future actually now that you mention it"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a great mindset to have! What specific activities or roles do you envision yourself taking on in the future to develop these skills?"
+    },
+    {
+      "role": "user",
+      "content": "I would want to be leader of a volunteer group or volunteer at a local hospital"
+    },
+    {
+      "role": "assistant",
+      "content": "Volunteering at a local hospital is a great way to gain experience! What specific leadership skills are you hoping to develop through leading a volunteer group?"
+    },
+    {
+      "role": "user",
+      "content": "I want to gain communication skills and practical skills that can help me break into medicine and become a successful doctor :)"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a great aspiration! What specific steps are you taking in high school to develop these communication and practical skills?"
+    },
+    {
+      "role": "user",
+      "content": "I also do debate actually which helps a lot"
+    },
+    {
+      "role": "assistant",
+      "content": "Debate is a great way to develop those skills! Do you have any specific goals within the debate team that you're aiming to achieve?"
+    },
+    {
+      "role": "user",
+      "content": "Not really I might go to provincials and then strive for national debate team as a goal"
+    },
+    {
+      "role": "assistant",
+      "content": "Joining the national debate team is a fantastic ambition! How are you preparing for the upcoming provincials?"
+    },
+    {
+      "role": "user",
+      "content": "Nothing really I need to focus on college admissions because I really want to go to John Hopkins University"
+    },
+    {
+      "role": "assistant",
+      "content": "John Hopkins University is a prestigious goal! What are you doing in high school right now to prepare for your college admissions?"
+    },
+    {
+      "role": "user",
+      "content": "Well I am working hard on my essays and selling myself"
+    },
+    {
+      "role": "assistant",
+      "content": "Working on your essays is a great way to reflect on your experiences and skills! Can you share what major themes or experiences you're focusing on in your essays?"
+    }
+  ],
+  "extracted_data_history": [
+    {
+      "timestamp": "2025-08-22T19:12:24.018Z",
+      "user_input": "I want to become a doctor",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 95,
+            "confidence": 95
+          },
+          {
+            "category_name": "healthcare_field_entry",
+            "percentage": 90,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "academic_record_enhancement",
+            "percentage": 90,
+            "confidence": 90
+          },
+          {
+            "category_name": "research_project_development",
+            "percentage": 80,
+            "confidence": 80
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 85,
+            "confidence": 85
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 90,
+            "confidence": 90
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:12:46.766Z",
+      "user_input": "I have conducted my own research and published to the JOURNAL OF EMERGING INVESTIGATORS!",
+      "extracted_data": {
+        "milestone_goals": [],
+        "intermediate_milestones": [
+          {
+            "category_name": "research_publication",
+            "percentage": 100,
+            "confidence": 95
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "scientific_method",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "research",
+            "percentage": 90,
+            "confidence": 90
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:15:54.956Z",
+      "user_input": "not really I don't really know what to do next? Maybe intern idk?",
+      "extracted_data": {
+        "milestone_goals": [],
+        "intermediate_milestones": [
+          {
+            "category_name": "internship_work_experience",
+            "percentage": 50,
+            "confidence": 40
+          }
+        ],
+        "skills": [],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:16:15.399Z",
+      "user_input": "I'm contemplating cold emailing a bunch of labs in my area",
+      "extracted_data": {
+        "milestone_goals": [],
+        "intermediate_milestones": [
+          {
+            "category_name": "lab_experience",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "public_communication",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_research",
+            "percentage": 60,
+            "confidence": 70
+          },
+          {
+            "category_name": "biomedical_engineering",
+            "percentage": 60,
+            "confidence": 70
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:16:44.323Z",
+      "user_input": "Drug Science Pharmacology and Bioinformatics",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "graduate_school_stem",
+            "percentage": 80,
+            "confidence": 70
+          },
+          {
+            "category_name": "research_career_start",
+            "percentage": 75,
+            "confidence": 65
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "research_project_development",
+            "percentage": 80,
+            "confidence": 70
+          },
+          {
+            "category_name": "academic_record_enhancement",
+            "percentage": 70,
+            "confidence": 65
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 85,
+            "confidence": 75
+          },
+          {
+            "category_name": "chemistry_mastery",
+            "percentage": 80,
+            "confidence": 70
+          },
+          {
+            "category_name": "data_science_analytics",
+            "percentage": 75,
+            "confidence": 65
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_research",
+            "percentage": 85,
+            "confidence": 75
+          },
+          {
+            "category_name": "biomedical_engineering",
+            "percentage": 80,
+            "confidence": 70
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:17:02.470Z",
+      "user_input": "Well mainly I just want to be a doctor, I'm pretty darn set on that",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 95,
+            "confidence": 95
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "academic_record_enhancement",
+            "percentage": 85,
+            "confidence": 85
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "biology_mastery",
+            "percentage": 80,
+            "confidence": 80
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 95,
+            "confidence": 95
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:17:19.406Z",
+      "user_input": "you just asked me that?",
+      "extracted_data": {}
+    },
+    {
+      "timestamp": "2025-08-22T19:17:45.755Z",
+      "user_input": "no I haven't though I might want to do that in the future actually now that you mention it",
+      "extracted_data": {}
+    },
+    {
+      "timestamp": "2025-08-22T19:18:10.911Z",
+      "user_input": "I would want to be leader of a volunteer group or volunteer at a local hospital",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "healthcare_field_entry",
+            "percentage": 70,
+            "confidence": 80
+          },
+          {
+            "category_name": "service_year",
+            "percentage": 80,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "volunteer_hours",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "leadership_position_development",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "leadership_management",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "public_communication",
+            "percentage": 70,
+            "confidence": 75
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "healthcare_field_entry",
+            "percentage": 70,
+            "confidence": 80
+          },
+          {
+            "category_name": "nonprofit_sector",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:18:39.434Z",
+      "user_input": "I want to gain communication skills and practical skills that can help me break into medicine and become a successful doctor :)",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "medical_school_path",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "healthcare_field_entry",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "academic_record_enhancement",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "research_project_development",
+            "percentage": 70,
+            "confidence": 75
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "public_communication",
+            "percentage": 85,
+            "confidence": 90
+          },
+          {
+            "category_name": "biology_mastery",
+            "percentage": 75,
+            "confidence": 80
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "medicine_clinical",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:18:52.809Z",
+      "user_input": "I also do debate actually which helps a lot",
+      "extracted_data": {
+        "skills": [
+          {
+            "category_name": "debate_argumentation",
+            "percentage": 100,
+            "confidence": 95
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:19:10.593Z",
+      "user_input": "Not really I might go to provincials and then strive for national debate team as a goal",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competition_success",
+            "percentage": 80,
+            "confidence": 90
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "leadership_position_development",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "debate_argumentation",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:19:29.607Z",
+      "user_input": "Nothing really I need to focus on college admissions because I really want to go to John Hopkins University",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "top_20_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "college_apps_submit",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "skills": [],
+        "sectors": []
+      }
+    },
+    {
+      "timestamp": "2025-08-22T19:19:45.464Z",
+      "user_input": "Well I am working hard on my essays and selling myself",
+      "extracted_data": {
+        "milestone_goals": [],
+        "intermediate_milestones": [
+          {
+            "category_name": "essays_complete",
+            "percentage": 90,
+            "confidence": 90
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "creative_writing",
+            "percentage": 80,
+            "confidence": 80
+          },
+          {
+            "category_name": "sales_skills",
+            "percentage": 70,
+            "confidence": 70
+          }
+        ],
+        "sectors": []
+      }
+    }
+  ],
+  "student_profile": {
+    "demographics": {},
+    "academics": {},
+    "extracurriculars": [],
+    "awards": [],
+    "interests": [],
+    "progress": {},
+    "goals": {}
+  },
+  "database_data": {
+    "milestone_goals": [
+      {
+        "id": 83,
+        "student_id": 19,
+        "category_name": "medical_school_path",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:12:25.549605"
+      },
+      {
+        "id": 84,
+        "student_id": 19,
+        "category_name": "healthcare_field_entry",
+        "percentage": 85,
+        "updated_at": "2025-08-22T19:12:25.933809"
+      },
+      {
+        "id": 85,
+        "student_id": 19,
+        "category_name": "graduate_school_stem",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:16:45.798888"
+      },
+      {
+        "id": 86,
+        "student_id": 19,
+        "category_name": "research_career_start",
+        "percentage": 75,
+        "updated_at": "2025-08-22T19:16:45.957552"
+      },
+      {
+        "id": 89,
+        "student_id": 19,
+        "category_name": "service_year",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:18:12.721304"
+      },
+      {
+        "id": 92,
+        "student_id": 19,
+        "category_name": "competition_success",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:19:12.089426"
+      },
+      {
+        "id": 93,
+        "student_id": 19,
+        "category_name": "top_20_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:19:31.092594"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 67,
+        "student_id": 19,
+        "category_name": "research_publication",
+        "percentage": 100,
+        "updated_at": "2025-08-22T19:12:48.275543"
+      },
+      {
+        "id": 68,
+        "student_id": 19,
+        "category_name": "internship_work_experience",
+        "percentage": 50,
+        "updated_at": "2025-08-22T19:15:56.617917"
+      },
+      {
+        "id": 69,
+        "student_id": 19,
+        "category_name": "lab_experience",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:16:16.92252"
+      },
+      {
+        "id": 73,
+        "student_id": 19,
+        "category_name": "volunteer_hours",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:18:12.877819"
+      },
+      {
+        "id": 65,
+        "student_id": 19,
+        "category_name": "academic_record_enhancement",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:12:26.281839"
+      },
+      {
+        "id": 66,
+        "student_id": 19,
+        "category_name": "research_project_development",
+        "percentage": 70,
+        "updated_at": "2025-08-22T19:12:26.433616"
+      },
+      {
+        "id": 74,
+        "student_id": 19,
+        "category_name": "leadership_position_development",
+        "percentage": 70,
+        "updated_at": "2025-08-22T19:18:13.024363"
+      },
+      {
+        "id": 78,
+        "student_id": 19,
+        "category_name": "college_apps_submit",
+        "percentage": 85,
+        "updated_at": "2025-08-22T19:19:31.32307"
+      },
+      {
+        "id": 79,
+        "student_id": 19,
+        "category_name": "essays_complete",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:19:46.956334"
+      }
+    ],
+    "skills": [
+      {
+        "id": 65,
+        "student_id": 19,
+        "category_name": "scientific_method",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:12:48.4865"
+      },
+      {
+        "id": 68,
+        "student_id": 19,
+        "category_name": "chemistry_mastery",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:16:46.545571"
+      },
+      {
+        "id": 69,
+        "student_id": 19,
+        "category_name": "data_science_analytics",
+        "percentage": 75,
+        "updated_at": "2025-08-22T19:16:46.673321"
+      },
+      {
+        "id": 71,
+        "student_id": 19,
+        "category_name": "leadership_management",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:18:13.169945"
+      },
+      {
+        "id": 66,
+        "student_id": 19,
+        "category_name": "public_communication",
+        "percentage": 85,
+        "updated_at": "2025-08-22T19:16:17.172955"
+      },
+      {
+        "id": 64,
+        "student_id": 19,
+        "category_name": "biology_mastery",
+        "percentage": 75,
+        "updated_at": "2025-08-22T19:12:26.579646"
+      },
+      {
+        "id": 75,
+        "student_id": 19,
+        "category_name": "debate_argumentation",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:18:54.29846"
+      },
+      {
+        "id": 77,
+        "student_id": 19,
+        "category_name": "creative_writing",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:19:47.159202"
+      },
+      {
+        "id": 78,
+        "student_id": 19,
+        "category_name": "sales_skills",
+        "percentage": 70,
+        "updated_at": "2025-08-22T19:19:47.283267"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 65,
+        "student_id": 19,
+        "category_name": "research",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:12:48.63275"
+      },
+      {
+        "id": 66,
+        "student_id": 19,
+        "category_name": "medicine_research",
+        "percentage": 85,
+        "updated_at": "2025-08-22T19:16:17.297303"
+      },
+      {
+        "id": 67,
+        "student_id": 19,
+        "category_name": "biomedical_engineering",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:16:17.448236"
+      },
+      {
+        "id": 71,
+        "student_id": 19,
+        "category_name": "healthcare_field_entry",
+        "percentage": 70,
+        "updated_at": "2025-08-22T19:18:13.536671"
+      },
+      {
+        "id": 72,
+        "student_id": 19,
+        "category_name": "nonprofit_sector",
+        "percentage": 80,
+        "updated_at": "2025-08-22T19:18:13.733608"
+      },
+      {
+        "id": 64,
+        "student_id": 19,
+        "category_name": "medicine_clinical",
+        "percentage": 90,
+        "updated_at": "2025-08-22T19:12:26.7293"
+      }
+    ]
+  },
+  "summary": {
+    "total_categories_identified": 31,
+    "conversation_length": 30,
+    "data_extraction_events": 14
+  }
+}

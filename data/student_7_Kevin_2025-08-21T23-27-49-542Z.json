@@ -1,0 +1,181 @@
+{
+  "student_info": {
+    "id": 7,
+    "name": "Kevin",
+    "email": "kevin@gmail.com",
+    "session_date": "2025-08-21T23:27:49.542Z",
+    "total_conversation_turns": 2
+  },
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "I'm interested in CS and building things"
+    },
+    {
+      "role": "assistant",
+      "content": "That's awesome! The field of Computer Science is full of exciting opportunities, especially for those who enjoy building and creating new things. Are there any specific aspects of CS that you're particularly interested in, like programming, algorithms, data science, or maybe artificial intelligence? And when you say 'building things', do you mean developing software, designing apps, creating websites, or something else entirely?"
+    },
+    {
+      "role": "user",
+      "content": "I'm interested in artificial intelligence and research related to that. I really want to study AI at stanford"
+    },
+    {
+      "role": "assistant",
+      "content": "That's a fantastic goal! Stanford is renowned for its AI program, and being interested in research could open some really interesting doors for you. Are there any particular areas in AI research that catch your interest? For example, Machine Learning, Natural Language Processing, Robotics, or maybe Neural Networks? Also, what is it about Stanford's program that draws you in?"
+    }
+  ],
+  "extracted_data_history": [
+    {
+      "timestamp": "2025-08-21T23:27:07.723Z",
+      "user_input": "I'm interested in CS and building things",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "tech_industry_entry",
+            "percentage": 70,
+            "confidence": 80
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "computer_science",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "hardware_engineering",
+            "percentage": 60,
+            "confidence": 70
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "computer_science",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-08-21T23:27:37.156Z",
+      "user_input": "I'm interested in artificial intelligence and research related to that. I really want to study AI at stanford",
+      "extracted_data": {
+        "milestone_goals": [
+          {
+            "category_name": "competitive_university_acceptance",
+            "percentage": 90,
+            "confidence": 95
+          },
+          {
+            "category_name": "tech_industry_entry",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ],
+        "intermediate_milestones": [
+          {
+            "category_name": "college_apps_submit",
+            "percentage": 85,
+            "confidence": 90
+          }
+        ],
+        "skills": [
+          {
+            "category_name": "computer_science",
+            "percentage": 80,
+            "confidence": 85
+          },
+          {
+            "category_name": "ai_machine_learning",
+            "percentage": 90,
+            "confidence": 95
+          }
+        ],
+        "sectors": [
+          {
+            "category_name": "artificial_intelligence",
+            "percentage": 95,
+            "confidence": 100
+          },
+          {
+            "category_name": "computer_science",
+            "percentage": 80,
+            "confidence": 85
+          }
+        ]
+      }
+    }
+  ],
+  "database_data": {
+    "milestone_goals": [
+      {
+        "id": 13,
+        "student_id": 7,
+        "category_name": "tech_industry_entry",
+        "percentage": 80,
+        "updated_at": "2025-08-21T23:27:10.81114"
+      },
+      {
+        "id": 14,
+        "student_id": 7,
+        "category_name": "competitive_university_acceptance",
+        "percentage": 90,
+        "updated_at": "2025-08-21T23:27:40.091413"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 12,
+        "student_id": 7,
+        "category_name": "college_apps_submit",
+        "percentage": 85,
+        "updated_at": "2025-08-21T23:27:40.479347"
+      }
+    ],
+    "skills": [
+      {
+        "id": 15,
+        "student_id": 7,
+        "category_name": "computer_science",
+        "percentage": 80,
+        "updated_at": "2025-08-21T23:27:10.998358"
+      },
+      {
+        "id": 16,
+        "student_id": 7,
+        "category_name": "hardware_engineering",
+        "percentage": 60,
+        "updated_at": "2025-08-21T23:27:11.12898"
+      },
+      {
+        "id": 18,
+        "student_id": 7,
+        "category_name": "ai_machine_learning",
+        "percentage": 90,
+        "updated_at": "2025-08-21T23:27:41.119826"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 17,
+        "student_id": 7,
+        "category_name": "computer_science",
+        "percentage": 80,
+        "updated_at": "2025-08-21T23:27:11.255496"
+      },
+      {
+        "id": 18,
+        "student_id": 7,
+        "category_name": "artificial_intelligence",
+        "percentage": 95,
+        "updated_at": "2025-08-21T23:27:41.367548"
+      }
+    ]
+  },
+  "summary": {
+    "total_categories_identified": 8,
+    "conversation_length": 4,
+    "data_extraction_events": 2
+  }
+}
