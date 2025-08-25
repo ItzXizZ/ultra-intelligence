@@ -14,7 +14,8 @@
     "server": "node server.js",
     "server-dev": "nodemon server.js",
     "dev-full": "concurrently \"npm run server-dev\" \"npm run ui\"",
-    "start-ui": "concurrently \"npm run server\" \"npm run ui\""
+    "start-ui": "concurrently \"npm run server\" \"npm run ui\"",
+    "build": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "openai": "^4.20.1",
