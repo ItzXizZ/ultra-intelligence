@@ -1,0 +1,49 @@
+{
+  "student_info": {
+    "id": 17,
+    "name": "asdf",
+    "age": "15",
+    "location": "324",
+    "highschool": "23412",
+    "gpa": "2",
+    "sat_act": "1451",
+    "session_date": "2025-08-25T03:04:02.629Z",
+    "conversation_structure": "Goal identification + Strategic counseling + Comprehensive extraction"
+  },
+  "identified_milestone_goals": [],
+  "extracurriculars": [],
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    }
+  ],
+  "extracted_data_history": [],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 17,
+      "name": "asdf",
+      "email": "asdf@student.temp",
+      "age": "15",
+      "location": "324",
+      "highschool": "23412",
+      "gpa": 2,
+      "satscore": "1451",
+      "exploration_openness": "medium",
+      "created_at": "2025-08-25T03:03:48.434528",
+      "updated_at": "2025-08-25T03:03:48.434528"
+    },
+    "milestone_goals": [],
+    "intermediate_milestones": [],
+    "skills": [],
+    "sectors": [],
+    "extracurriculars": []
+  },
+  "summary": {
+    "total_goals_identified": 0,
+    "total_skills_identified": 0,
+    "total_sectors_identified": 0,
+    "conversation_length": 1,
+    "phase_completed": "milestone_identification"
+  }
+}
