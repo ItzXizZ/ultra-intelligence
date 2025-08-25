@@ -20,7 +20,6 @@ function App() {
   
   // Flow state
   const [currentStep, setCurrentStep] = useState('basic-info'); // basic-info, milestone-chat, intermediate-chat, summary
-  const [identifiedMilestones, setIdentifiedMilestones] = useState([]);
   const [extracurriculars, setExtracurriculars] = useState([]);
   const [phase, setPhase] = useState('');
   const [summaryData, setSummaryData] = useState(null);
@@ -129,7 +128,6 @@ function App() {
       
       // Check if we should show Yes/No buttons for extracurriculars
       if (data.phase === 'extracurricular_question') {
-        setIdentifiedMilestones(data.identifiedMilestones || []);
         setShowYesNoButtons(true);
       }
       
@@ -292,13 +290,7 @@ function App() {
     }));
   };
 
-  // Handle extracurricular input changes
-  const handleExtracurricularChange = (goal, value) => {
-    setExtracurriculars(prev => ({
-      ...prev,
-      [goal]: value
-    }));
-  };
+
 
   // Extract data and show summary
   const extractData = async () => {
