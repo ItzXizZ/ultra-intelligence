@@ -23,16 +23,6 @@
       "dest": "/frontend/$1"
     }
   ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
-    },
-    {
-      "source": "/((?!api).*)",
-      "destination": "/frontend/index.html"
-    }
-  ],
   "functions": {
     "server.js": {
       "maxDuration": 30
