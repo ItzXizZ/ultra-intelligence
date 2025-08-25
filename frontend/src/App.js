@@ -341,7 +341,6 @@ function App() {
     setMessages([]);
     setCurrentMessage('');
     setCurrentStep('basic-info');
-    setIdentifiedMilestones([]);
     setExtracurriculars({});
     setPhase('');
   };
