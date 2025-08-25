@@ -1,2 +1,0 @@
-[33m2bb9420[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Remove hardcoded API keys and use environment variables for security
-[33mdd3c8b6[m Initial commit: UltraIntelligence project with backend server and React UI

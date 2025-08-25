@@ -1,0 +1,99 @@
+{
+  "student_info": {
+    "id": 12,
+    "name": "Ethan",
+    "age": "18",
+    "location": "Victoria",
+    "highschool": "St. Michaels University School",
+    "gpa": "4.0",
+    "sat_act": "2530",
+    "session_date": "2025-08-25T02:30:03.667Z",
+    "conversation_structure": "Goal identification + Strategic counseling + Comprehensive extraction"
+  },
+  "identified_milestone_goals": [
+    "top_10_university_acceptance"
+  ],
+  "extracurriculars": [
+    {
+      "title": "Founder & CEO",
+      "description": "Founded an AI-driven education company that has successfully prepared over 100 students across North America for prestigious mathematics competitions, including AMC, AIME, USAMO, and USAJMO.\n\nKey Achievements:\n\n• Student Impact: Successfully prepared 100+ students across North America for top-tier math competitions\n• Revenue Growth: Generated $75,000+ total revenue with MRR of $5,000-$10,000 \n• Recognition: Featured on the front cover of BCBusiness, Oak Bay News, and CheqNews\n\nPlatform Development:\n\n• Teaching Experience: Leveraged 150+ hours of direct instruction and extensive independent training background\n• Technology Integration: Built proprietary platform with automated scheduling, payment processing, and communication tools\nAI Innovation: Integrated AI-driven curriculum development for personalized learning experiences\n• Scalability: Designed an automated ecosystem for rapid expansion and enhanced student outcomes\n\nTeam & Partnerships:\n\n• Expert Faculty: Assembled team of 10 coaches affiliated with prestigious universities (MIT, UC Berkeley, CMU)\n• Geographic Reach: Established North America-wide student base and coaching network",
+      "timestamp": "2025-08-25T02:29:08.915Z"
+    },
+    {
+      "title": "Software Engineer Intern",
+      "description": "Paid full-stack software engineering position at Ultra (YC24). Building an AI EDUCATION APP that helps ambitious high schoolers reach for the stars :)\n\nFeatures shipped so far:\nhttps://useultra.ai/student-portal\n\nCurrent focus:\nCreating an intelligent personality system that understands and aids Ultra users",
+      "timestamp": "2025-08-25T02:29:28.799Z"
+    }
+  ],
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi Ethan! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "I want to get into a top 10 university"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I can see you're focused on top 10 university acceptance. Would you like to share some of your extracurricular activities and experiences that relate to these goals? This will help me give you more targeted advice."
+    },
+    {
+      "role": "user",
+      "content": "Yes, I'd like to share my extracurriculars"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! Please add your extracurricular activities one at a time. For each activity, provide a title and description."
+    },
+    {
+      "role": "assistant",
+      "content": "Counselor: Wow, Ethan, your achievements with the AI-driven education company are truly impressive! Founding a company that has such a significant impact on students and being featured in major publications is no small feat. Given your strong entrepreneurial background and tech expertise, there's a unique opportunity that could really set you apart in your university applications. \n\nWould you be interested in exploring how you could leverage your AI and education platform to develop a collaborative project with a university lab or professor? This could not only enhance your application but also provide you with valuable insights and connections in the academic world."
+    },
+    {
+      "role": "assistant",
+      "content": "Thanks for sharing! Let's identify some specific next steps to strengthen your profile."
+    },
+    {
+      "role": "assistant",
+      "content": "Counselor: Wow, Ethan, your achievements with the AI-driven education company are truly impressive! Founding a company that has such a significant impact on students and being featured in major publications is no small feat. Given your strong entrepreneurial background and tech expertise, there's a unique opportunity that could really set you apart in your university applications. \n\nWould you be interested in exploring how you could leverage your AI and education platform to develop a collaborative project with a university lab or professor? This could not only enhance your application but also provide you with valuable insights and connections in the academic world."
+    }
+  ],
+  "extracted_data_history": [],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 12,
+      "name": "Ethan",
+      "email": "ethan@student.temp",
+      "age": "18",
+      "location": "Victoria",
+      "highschool": "St. Michaels University School",
+      "gpa": 4,
+      "satscore": "2530",
+      "exploration_openness": "medium",
+      "created_at": "2025-08-25T02:28:18.308857",
+      "updated_at": "2025-08-25T02:28:18.308857"
+    },
+    "milestone_goals": [],
+    "intermediate_milestones": [],
+    "skills": [],
+    "sectors": [],
+    "extracurriculars": [
+      {
+        "id": 17,
+        "student_id": 12,
+        "category_name": "Software Engineer Intern_1756088968799",
+        "description": "Paid full-stack software engineering position at Ultra (YC24). Building an AI EDUCATION APP that helps ambitious high schoolers reach for the stars :)\n\nFeatures shipped so far:\nhttps://useultra.ai/student-portal\n\nCurrent focus:\nCreating an intelligent personality system that understands and aids Ultra users",
+        "title": "Software Engineer Intern",
+        "updated_at": "2025-08-25T02:29:29.032644"
+      }
+    ]
+  },
+  "summary": {
+    "total_goals_identified": 0,
+    "total_skills_identified": 0,
+    "total_sectors_identified": 0,
+    "conversation_length": 8,
+    "phase_completed": "intermediate_goals"
+  }
+}

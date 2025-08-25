@@ -1,0 +1,107 @@
+{
+  "student_info": {
+    "id": 10,
+    "name": "Ethan",
+    "age": "18",
+    "location": "Victoria",
+    "highschool": "St. Michaels University School",
+    "gpa": "3.9",
+    "sat_act": "1560",
+    "session_date": "2025-08-25T02:22:53.908Z",
+    "conversation_structure": "Goal identification + Strategic counseling + Comprehensive extraction"
+  },
+  "identified_milestone_goals": [
+    "top_10_university_acceptance"
+  ],
+  "extracurriculars": [
+    {
+      "title": "Software Engineer Intern",
+      "description": "Paid full-stack software engineering position at Ultra (YC24). Building an AI EDUCATION APP that helps ambitious high schoolers reach for the stars :)",
+      "timestamp": "2025-08-25T02:16:04.594Z"
+    },
+    {
+      "title": "Research Intern",
+      "description": "At the UBC Laboratory of Targeted Drug Delivery and Nanomedicine, I have contributed over 300 volunteer hours conducting advanced microscopy analysis for groundbreaking mRNA delivery research. \n\nMy primary responsibilities include:\n\n• Live-cell imaging analysis to track intracellular particle dynamics and endosomal interactions over extended time periods (45+ minutes)",
+      "timestamp": "2025-08-25T02:16:11.767Z"
+    }
+  ],
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi Ethan! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "I want to get into a top 10 US university, that's my main goal!"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I can see you're focused on top 10 university acceptance. Would you like to share some of your extracurricular activities and experiences that relate to these goals? This will help me give you more targeted advice."
+    },
+    {
+      "role": "user",
+      "content": "Yes, I'd like to share my extracurriculars"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! Please add your extracurricular activities one at a time. For each activity, provide a title and description."
+    },
+    {
+      "role": "assistant",
+      "content": "Counselor: Thanks for sharing your impressive experiences, Ethan! Your work as a Software Engineer Intern at Ultra and your research at the UBC Laboratory are truly standout activities. With your strong background in AI and nanomedicine, there's a unique opportunity to further distinguish yourself by potentially publishing a paper or presenting at a conference. This could really highlight your interdisciplinary expertise and commitment to advancing your field.\n\nWould you be interested in exploring how to identify a research topic that bridges your AI and nanomedicine work, and the steps to get it published or presented?"
+    },
+    {
+      "role": "assistant",
+      "content": "Thanks for sharing! Let's identify some specific next steps to strengthen your profile."
+    },
+    {
+      "role": "assistant",
+      "content": "Counselor: Thanks for sharing your impressive experiences, Ethan! Your work as a Software Engineer Intern at Ultra and your research at the UBC Laboratory are truly standout activities. With your strong background in AI and nanomedicine, there's a unique opportunity to further distinguish yourself by potentially publishing a paper or presenting at a conference. This could really highlight your interdisciplinary expertise and commitment to advancing your field.\n\nWould you be interested in exploring how to identify a research topic that bridges your AI and nanomedicine work, and the steps to get it published or presented?"
+    }
+  ],
+  "extracted_data_history": [],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 10,
+      "name": "Ethan",
+      "email": "ethan@student.temp",
+      "age": "18",
+      "location": "Victoria",
+      "highschool": "St. Michaels University School",
+      "gpa": 3.9,
+      "satscore": "1560",
+      "exploration_openness": "medium",
+      "created_at": "2025-08-25T02:15:27.971007",
+      "updated_at": "2025-08-25T02:15:27.971007"
+    },
+    "milestone_goals": [],
+    "intermediate_milestones": [],
+    "skills": [],
+    "sectors": [],
+    "extracurriculars": [
+      {
+        "id": 14,
+        "student_id": 10,
+        "category_name": "Software Engineer Intern_1756088164594",
+        "description": "Paid full-stack software engineering position at Ultra (YC24). Building an AI EDUCATION APP that helps ambitious high schoolers reach for the stars :)",
+        "title": "Software Engineer Intern",
+        "updated_at": "2025-08-25T02:16:05.008512"
+      },
+      {
+        "id": 15,
+        "student_id": 10,
+        "category_name": "Research Intern_1756088171767",
+        "description": "At the UBC Laboratory of Targeted Drug Delivery and Nanomedicine, I have contributed over 300 volunteer hours conducting advanced microscopy analysis for groundbreaking mRNA delivery research. \n\nMy primary responsibilities include:\n\n• Live-cell imaging analysis to track intracellular particle dynamics and endosomal interactions over extended time periods (45+ minutes)",
+        "title": "Research Intern",
+        "updated_at": "2025-08-25T02:16:12.136615"
+      }
+    ]
+  },
+  "summary": {
+    "total_goals_identified": 0,
+    "total_skills_identified": 0,
+    "total_sectors_identified": 0,
+    "conversation_length": 8,
+    "phase_completed": "intermediate_goals"
+  }
+}
