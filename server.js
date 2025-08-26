@@ -45,6 +45,53 @@ try {
 // Store active sessions (in production, use Redis or database)
 const activeSessions = new Map();
 
+// Helper function to get session from database if not in memory (for production)
+async function getSession(sessionId) {
+    // First try memory (for local development)
+    if (activeSessions.has(sessionId)) {
+        return activeSessions.get(sessionId);
+    }
+    
+    // If not in memory and supabase is available, try database
+    if (supabase) {
+        try {
+            const { data, error } = await supabase
+                .from('students')
+                .select('*')
+                .eq('session_id', sessionId)
+                .single();
+                
+            if (data && !error) {
+                // Reconstruct session object
+                const session = {
+                    sessionId: data.session_id,
+                    studentId: data.id,
+                    studentData: {
+                        name: data.name,
+                        age: data.age,
+                        location: data.location,
+                        highschool: data.highschool || '',
+                        gpa: data.gpa || '',
+                        satAct: data.sat_act || ''
+                    },
+                    identifiedMilestones: data.identified_milestones || [],
+                    conversationHistory: data.conversation_history || [],
+                    phase: data.phase || 'milestone_identification',
+                    extracurriculars: data.extracurriculars || []
+                };
+                
+                // Store back in memory for this request
+                activeSessions.set(sessionId, session);
+                return session;
+            }
+        } catch (error) {
+            console.error('Error fetching session from database:', error);
+        }
+    }
+    
+    return null;
+}
+
 // Removed old complex conversation system - using simplified approach
 
 // ================================================================================================
@@ -196,7 +243,7 @@ If unclear, return empty array: []
 // New conversation functions
 async function getMilestoneConversation(sessionId, userInput, isFirstQuestion = false) {
     try {
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) throw new Error('Session not found');
 
         let specificPrompt;
@@ -267,7 +314,7 @@ async function getMilestoneConversation(sessionId, userInput, isFirstQuestion = 
 
 async function getIntermediateConversation(sessionId, userInput) {
     try {
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) throw new Error('Session not found');
 
         const milestoneGoals = session.identifiedMilestones || [];
@@ -311,7 +358,7 @@ async function getIntermediateConversation(sessionId, userInput) {
 // Streaming versions of conversation functions
 async function getMilestoneConversationStream(sessionId, userInput, isFirstQuestion = false, sendSSE) {
     try {
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) throw new Error('Session not found');
 
         let specificPrompt;
@@ -398,7 +445,7 @@ async function getMilestoneConversationStream(sessionId, userInput, isFirstQuest
 
 async function getIntermediateConversationStream(sessionId, userInput, sendSSE) {
     try {
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) throw new Error('Session not found');
 
         const milestoneGoals = session.identifiedMilestones || [];
@@ -609,6 +656,10 @@ app.post('/api/submit-basic-info', async (req, res) => {
 
 // Handle extracurricular question response (Yes/No)
 app.post('/api/extracurricular-response', async (req, res) => {
+    // Check if required services are configured
+    if (!supabase) {
+        return res.status(500).json({ error: 'Supabase service not configured' });
+    }
     try {
         const { sessionId, response } = req.body;
         
@@ -616,7 +667,7 @@ app.post('/api/extracurricular-response', async (req, res) => {
             return res.status(400).json({ error: 'Session ID and response are required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
         }
@@ -658,6 +709,10 @@ app.post('/api/extracurricular-response', async (req, res) => {
 
 // New route for submitting individual extracurriculars
 app.post('/api/submit-extracurricular', async (req, res) => {
+    // Check if required services are configured
+    if (!supabase) {
+        return res.status(500).json({ error: 'Supabase service not configured' });
+    }
     try {
         console.log('Received extracurricular submission:', req.body);
         const { sessionId, title, description } = req.body;
@@ -667,7 +722,7 @@ app.post('/api/submit-extracurricular', async (req, res) => {
             return res.status(400).json({ error: 'Session ID, title, and description are required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             console.log('Session not found:', sessionId);
             return res.status(404).json({ error: 'Session not found' });
@@ -732,6 +787,10 @@ app.post('/api/submit-extracurricular', async (req, res) => {
 
 // Finish adding extracurriculars and move to intermediate goals
 app.post('/api/finish-extracurriculars', async (req, res) => {
+    // Check if required services are configured
+    if (!openai || !supabase) {
+        return res.status(500).json({ error: 'Required services not configured' });
+    }
     try {
         const { sessionId } = req.body;
         
@@ -739,7 +798,7 @@ app.post('/api/finish-extracurriculars', async (req, res) => {
             return res.status(400).json({ error: 'Session ID is required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
         }
@@ -776,7 +835,7 @@ app.post('/api/submit-extracurriculars', async (req, res) => {
             return res.status(400).json({ error: 'Session ID and extracurriculars are required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
         }
@@ -813,7 +872,7 @@ app.post('/api/send-message', async (req, res) => {
             return res.status(400).json({ error: 'Session ID and message are required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
         }
@@ -849,7 +908,7 @@ app.post('/api/send-message-new', async (req, res) => {
             return res.status(400).json({ error: 'Session ID and message are required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
         }
@@ -896,7 +955,7 @@ app.post('/api/send-message-stream', async (req, res) => {
             return res.status(400).json({ error: 'Session ID and message are required' });
         }
 
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
         }
@@ -1013,7 +1072,7 @@ app.get('/api/status/:sessionId', (req, res) => {
 app.get('/api/get-student-data/:sessionId', async (req, res) => {
     try {
         const { sessionId } = req.params;
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
@@ -1047,7 +1106,7 @@ app.get('/api/get-student-data/:sessionId', async (req, res) => {
 app.post('/api/generate-summary/:sessionId', async (req, res) => {
     try {
         const { sessionId } = req.params;
-        const session = activeSessions.get(sessionId);
+        const session = await getSession(sessionId);
         
         if (!session) {
             return res.status(404).json({ error: 'Session not found' });
