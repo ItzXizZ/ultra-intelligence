@@ -11,15 +11,34 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI client with error handling
+let openai = null;
+try {
+    if (process.env.OPENAI_API_KEY) {
+        openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY
+        });
+    } else {
+        console.warn('⚠️ OPENAI_API_KEY not found');
+    }
+} catch (error) {
+    console.error('❌ Failed to initialize OpenAI:', error.message);
+}
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase client with error handling
+let supabase = null;
+try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_KEY;
+    
+    if (supabaseUrl && supabaseKey) {
+        supabase = createClient(supabaseUrl, supabaseKey);
+    } else {
+        console.warn('⚠️ Supabase credentials not found');
+    }
+} catch (error) {
+    console.error('❌ Failed to initialize Supabase:', error.message);
+}
 
 // Goal-centric conversation system - no longer using category arrays
 
@@ -466,7 +485,10 @@ app.get('/api/test', (req, res) => {
     res.json({ 
         message: 'Server is running!', 
         timestamp: new Date().toISOString(),
-        env: process.env.NODE_ENV || 'development'
+        env: process.env.NODE_ENV || 'development',
+        openai_configured: !!openai,
+        supabase_configured: !!supabase,
+        port: process.env.PORT || 3001
     });
 });
 
@@ -860,6 +882,13 @@ app.post('/api/send-message-new', async (req, res) => {
 
 // Streaming message endpoint using Server-Sent Events
 app.post('/api/send-message-stream', async (req, res) => {
+    // Check if required services are configured
+    if (!openai) {
+        return res.status(500).json({ error: 'OpenAI service not configured' });
+    }
+    if (!supabase) {
+        return res.status(500).json({ error: 'Supabase service not configured' });
+    }
     try {
         const { sessionId, message } = req.body;
         
