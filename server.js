@@ -461,6 +461,15 @@ function streamResponseSSE(sendSSE, text) {
 
 // Routes
 
+// Test endpoint to verify server is running
+app.get('/api/test', (req, res) => {
+    res.json({ 
+        message: 'Server is running!', 
+        timestamp: new Date().toISOString(),
+        env: process.env.NODE_ENV || 'development'
+    });
+});
+
 // Legacy interview endpoint - redirects to new goal-centric system
 app.post('/api/start-interview', async (req, res) => {
     try {
@@ -1097,10 +1106,13 @@ function getConversationStatus(sessionId) {
 
 // Legacy functions removed - now purely conversation management
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`🚀 UltraIntelligence API server running on port ${PORT}`);
-    console.log(`📱 Frontend should connect to: http://localhost:${PORT}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 UltraIntelligence API server running on port ${PORT}`);
+        console.log(`📱 Frontend should connect to: http://localhost:${PORT}`);
+    });
+}
 
+// Export for Vercel
 module.exports = app;
