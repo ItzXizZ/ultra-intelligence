@@ -1194,13 +1194,11 @@ function getConversationStatus(sessionId) {
 
 // Legacy functions removed - now purely conversation management
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`🚀 UltraIntelligence API server running on port ${PORT}`);
-        console.log(`📱 Frontend should connect to: http://localhost:${PORT}`);
-    });
-}
+// Start the server
+app.listen(PORT, () => {
+    console.log(`🚀 UltraIntelligence API server running on port ${PORT}`);
+    console.log(`📱 Frontend should connect to: http://localhost:${PORT}`);
+});
 
 // Export for Vercel
 module.exports = app;
