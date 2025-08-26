@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
@@ -10,6 +11,9 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 // Initialize OpenAI client with error handling
 let openai = null;
@@ -1193,6 +1197,11 @@ function getConversationStatus(sessionId) {
 }
 
 // Legacy functions removed - now purely conversation management
+
+// Catch-all handler: send back React's index.html file for non-API routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
+});
 
 // Start the server
 app.listen(PORT, () => {
