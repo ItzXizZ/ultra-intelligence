@@ -144,9 +144,10 @@ function App() {
               if (data.type === 'content') {
                 accumulatedContent += data.content;
                 // Update the message in real-time
+                const currentContent = accumulatedContent;
                 setMessages(prev => prev.map(msg => 
                   msg.id === counselorMessageId 
-                    ? { ...msg, content: accumulatedContent }
+                    ? { ...msg, content: currentContent }
                     : msg
                 ));
               } else if (data.type === 'complete') {
@@ -770,20 +771,6 @@ function App() {
     return [
       { title: 'Exploration Path', description: 'Structured approach to discovering your optimal career direction' }
     ];
-  };
-  
-  // Get conversation progress insights
-  const getConversationInsights = () => {
-    const totalWords = messages.reduce((count, msg) => count + msg.content.split(' ').length, 0);
-    const avgWordsPerMessage = messages.length > 0 ? Math.round(totalWords / messages.length) : 0;
-    const conversationDepth = messages.length > 10 ? 'Deep' : messages.length > 5 ? 'Moderate' : 'Getting Started';
-    
-    return {
-      totalWords,
-      avgWordsPerMessage,
-      conversationDepth,
-      phase: phase === 'milestone_identification' ? 'Goal Discovery' : 'Strategic Planning'
-    };
   };
 
   // Render chat interface (milestone-chat or intermediate-chat)
