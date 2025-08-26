@@ -83,7 +83,7 @@ function App() {
     }
   };
 
-  // Send message in conversation
+  // Send message in conversation with streaming
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!currentMessage.trim() || !sessionId) return;
@@ -95,45 +95,114 @@ function App() {
       timestamp: new Date()
     };
 
+    const messageToSend = currentMessage.trim();
     setMessages(prev => [...prev, userMessage]);
     setCurrentMessage('');
     setIsLoading(true);
 
+    // Create a placeholder message for the AI response
+    const counselorMessageId = messages.length + 2;
+    const counselorMessage = {
+      id: counselorMessageId,
+      type: 'counselor',
+      content: '',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, counselorMessage]);
+
     try {
-      const response = await fetch('/api/send-message-new', {
+      const response = await fetch('/api/send-message-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId,
-          message: currentMessage.trim()
+          message: messageToSend
         })
       });
 
-      const data = await response.json();
-      
-      if (data.error) {
-        alert('Error: ' + data.error);
-        return;
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
 
-      const counselorMessage = {
-        id: messages.length + 2,
-        type: 'counselor',
-        content: data.message,
-        timestamp: new Date()
-      };
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedContent = '';
 
-      setMessages(prev => [...prev, counselorMessage]);
-      setPhase(data.phase);
-      
-      // Check if we should show Yes/No buttons for extracurriculars
-      if (data.phase === 'extracurricular_question') {
-        setShowYesNoButtons(true);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'content') {
+                accumulatedContent += data.content;
+                // Update the message in real-time
+                setMessages(prev => prev.map(msg => 
+                  msg.id === counselorMessageId 
+                    ? { ...msg, content: accumulatedContent }
+                    : msg
+                ));
+              } else if (data.type === 'complete') {
+                // Update phase and other data when complete
+                setPhase(data.phase);
+                
+                // Check if we should show Yes/No buttons for extracurriculars
+                if (data.phase === 'extracurricular_question') {
+                  setShowYesNoButtons(true);
+                }
+              } else if (data.type === 'error') {
+                throw new Error(data.error);
+              }
+            } catch (parseError) {
+              console.log('Non-JSON data received:', line);
+            }
+          }
+        }
       }
       
     } catch (error) {
-      console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again.');
+      console.error('Error sending streaming message:', error);
+      // Fallback to non-streaming if streaming fails
+      try {
+        const fallbackResponse = await fetch('/api/send-message-new', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            message: messageToSend
+          })
+        });
+
+        const fallbackData = await fallbackResponse.json();
+        
+        if (fallbackData.error) {
+          alert('Error: ' + fallbackData.error);
+          return;
+        }
+
+        // Update the message with fallback response
+        setMessages(prev => prev.map(msg => 
+          msg.id === counselorMessageId 
+            ? { ...msg, content: fallbackData.message }
+            : msg
+        ));
+        setPhase(fallbackData.phase);
+        
+        // Check if we should show Yes/No buttons for extracurriculars
+        if (fallbackData.phase === 'extracurricular_question') {
+          setShowYesNoButtons(true);
+        }
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError);
+        alert('Failed to send message. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -341,8 +410,9 @@ function App() {
     setMessages([]);
     setCurrentMessage('');
     setCurrentStep('basic-info');
-    setExtracurriculars({});
+    setExtracurriculars([]);
     setPhase('');
+    setSummaryData(null);
   };
 
   // Format milestone goals for display
@@ -482,28 +552,49 @@ function App() {
             <div className="summary-section">
               <h3>Extracurricular Activities</h3>
               <div className="activities-list">
-                {/* Display session extracurriculars */}
-                {(summaryData.extracurriculars || []).map((ec, index) => (
-                  <div key={`session-${index}`} className="activity-item">
-                    <h4>{ec.title}</h4>
-                    <p>{ec.description}</p>
-                    <span className="activity-source">Session Data</span>
-                  </div>
-                ))}
-                
-                {/* Display database extracurriculars */}
-                {(summaryData.database_extracurriculars || []).map((ec, index) => (
-                  <div key={`db-${index}`} className="activity-item">
-                    <h4>{ec.title}</h4>
-                    <p>{ec.description}</p>
-                    <span className="activity-source">Database</span>
-                  </div>
-                ))}
-                
-                {(!summaryData.extracurriculars || summaryData.extracurriculars.length === 0) && 
-                 (!summaryData.database_extracurriculars || summaryData.database_extracurriculars.length === 0) && (
-                  <p className="no-data">No extracurricular activities recorded</p>
-                )}
+                {(() => {
+                  // Combine and deduplicate extracurriculars
+                  const sessionECs = summaryData.extracurriculars || [];
+                  const dbECs = summaryData.database_extracurriculars || [];
+                  
+                  // Create a map to deduplicate by title
+                  const ecMap = new Map();
+                  
+                  // Add session ECs first (they're more recent)
+                  sessionECs.forEach((ec, index) => {
+                    ecMap.set(ec.title.toLowerCase(), {
+                      ...ec,
+                      source: 'Session',
+                      key: `session-${index}`
+                    });
+                  });
+                  
+                  // Add database ECs only if not already present
+                  dbECs.forEach((ec, index) => {
+                    const key = ec.title.toLowerCase();
+                    if (!ecMap.has(key)) {
+                      ecMap.set(key, {
+                        ...ec,
+                        source: 'Database',
+                        key: `db-${index}`
+                      });
+                    }
+                  });
+                  
+                  const uniqueECs = Array.from(ecMap.values());
+                  
+                  if (uniqueECs.length === 0) {
+                    return <p className="no-data">No extracurricular activities recorded</p>;
+                  }
+                  
+                  return uniqueECs.map((ec) => (
+                    <div key={ec.key} className="activity-item">
+                      <h4>{ec.title}</h4>
+                      <p>{ec.description}</p>
+                      <span className="activity-source">{ec.source}</span>
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
 
@@ -511,16 +602,12 @@ function App() {
               <h3>Milestone Goals Analysis</h3>
               <div className="goals-analysis">
                 {summaryData.milestone_goals && summaryData.milestone_goals.length > 0 ? (
-                  (summaryData.milestone_goals || []).map((goal, index) => (
-                    <div key={index} className="goal-analysis-item">
+                  (summaryData.milestone_goals || [])
+                    .sort((a, b) => a.percentage - b.percentage) // Sort by ranking (lower number = higher rank)
+                    .map((goal, index) => (
+                    <div key={index} className="goal-analysis-item ranking-item">
+                      <div className="rank-number">#{goal.percentage}</div>
                       <div className="goal-name">{formatGoalName(goal.category_name)}</div>
-                      <div className="goal-percentage">{goal.percentage}%</div>
-                      <div className="goal-bar">
-                        <div 
-                          className="goal-fill" 
-                          style={{ width: `${goal.percentage}%` }}
-                        ></div>
-                      </div>
                     </div>
                   ))
                 ) : (
@@ -533,16 +620,12 @@ function App() {
               <h3>Intermediate Milestones Analysis</h3>
               <div className="goals-analysis">
                 {summaryData.intermediate_milestones && summaryData.intermediate_milestones.length > 0 ? (
-                  (summaryData.intermediate_milestones || []).map((milestone, index) => (
-                    <div key={index} className="goal-analysis-item">
+                  (summaryData.intermediate_milestones || [])
+                    .sort((a, b) => a.percentage - b.percentage) // Sort by ranking (lower number = higher rank)
+                    .map((milestone, index) => (
+                    <div key={index} className="goal-analysis-item ranking-item">
+                      <div className="rank-number">#{milestone.percentage}</div>
                       <div className="goal-name">{formatGoalName(milestone.category_name)}</div>
-                      <div className="goal-percentage">{milestone.percentage}%</div>
-                      <div className="goal-bar">
-                        <div 
-                          className="goal-fill" 
-                          style={{ width: `${milestone.percentage}%` }}
-                        ></div>
-                      </div>
                     </div>
                   ))
                 ) : (
@@ -555,16 +638,12 @@ function App() {
               <h3>Skills Analysis</h3>
               <div className="goals-analysis">
                 {summaryData.skills && summaryData.skills.length > 0 ? (
-                  (summaryData.skills || []).map((skill, index) => (
-                    <div key={index} className="goal-analysis-item">
+                  (summaryData.skills || [])
+                    .sort((a, b) => a.percentage - b.percentage) // Sort by ranking (lower number = higher rank)
+                    .map((skill, index) => (
+                    <div key={index} className="goal-analysis-item ranking-item">
+                      <div className="rank-number">#{skill.percentage}</div>
                       <div className="goal-name">{formatGoalName(skill.category_name)}</div>
-                      <div className="goal-percentage">{skill.percentage}%</div>
-                      <div className="goal-bar">
-                        <div 
-                          className="goal-progress" 
-                          style={{width: `${skill.percentage}%`}}
-                        ></div>
-                      </div>
                     </div>
                   ))
                 ) : (
@@ -577,16 +656,12 @@ function App() {
               <h3>Sector Interests Analysis</h3>
               <div className="goals-analysis">
                 {summaryData.sectors && summaryData.sectors.length > 0 ? (
-                  (summaryData.sectors || []).map((sector, index) => (
-                    <div key={index} className="goal-analysis-item">
+                  (summaryData.sectors || [])
+                    .sort((a, b) => a.percentage - b.percentage) // Sort by ranking (lower number = higher rank)
+                    .map((sector, index) => (
+                    <div key={index} className="goal-analysis-item ranking-item">
+                      <div className="rank-number">#{sector.percentage}</div>
                       <div className="goal-name">{formatGoalName(sector.category_name)}</div>
-                      <div className="goal-percentage">{sector.percentage}%</div>
-                      <div className="goal-bar">
-                        <div 
-                          className="goal-progress" 
-                          style={{width: `${sector.percentage}%`}}
-                        ></div>
-                      </div>
                     </div>
                   ))
                 ) : (
@@ -602,7 +677,17 @@ function App() {
               </div>
               <div className="stat-item">
                 <span className="stat-value">
-                  {(summaryData.extracurriculars?.length || 0) + (summaryData.database_extracurriculars?.length || 0)}
+                  {(() => {
+                    // Calculate deduplicated EC count
+                    const sessionECs = summaryData.extracurriculars || [];
+                    const dbECs = summaryData.database_extracurriculars || [];
+                    const ecTitles = new Set();
+                    
+                    sessionECs.forEach(ec => ecTitles.add(ec.title.toLowerCase()));
+                    dbECs.forEach(ec => ecTitles.add(ec.title.toLowerCase()));
+                    
+                    return ecTitles.size;
+                  })()}
                 </span>
                 <span className="stat-label">Activities Shared</span>
               </div>
@@ -640,104 +725,194 @@ function App() {
     );
   }
 
+  // Extract next steps based on conversation analysis
+  const getAvailableFeatures = () => {
+    // Only show features after meaningful conversation (at least 4 messages)
+    if (!messages || messages.length < 4) {
+      return [];
+    }
+    
+    const conversationContent = messages.map(m => m.content).join(' ').toLowerCase();
+    
+    // College Application Support
+    if (conversationContent.includes('college') || conversationContent.includes('university')) {
+      return [
+        { title: 'Chance Me Analysis', description: 'Comprehensive admission probability analysis for your target universities' },
+        { title: 'College Application Roadmap', description: 'Complete timeline and strategy for maximizing admission success' },
+        { title: 'Admissions Program Support', description: 'Essay writing guidance and Common App optimization' }
+      ];
+    }
+    
+    // Research & STEM
+    if (conversationContent.includes('research') || conversationContent.includes('science')) {
+      return [
+        { title: 'Research Plan Development', description: 'Structured pathway to conducting and publishing research' },
+        { title: 'Ultra Research Opportunities', description: 'Curated research positions and mentorship connections' }
+      ];
+    }
+    
+    // Skill Development
+    if (conversationContent.includes('internship') || conversationContent.includes('experience')) {
+      return [
+        { title: 'Internship Opportunities', description: 'Targeted internship matching based on your interests and goals' },
+        { title: 'Ultra Opportunities', description: 'Exclusive high-impact experiences for competitive students' }
+      ];
+    }
+    
+    // Test Prep
+    if (conversationContent.includes('sat') || conversationContent.includes('test')) {
+      return [
+        { title: 'SAT Platform Access', description: 'Personalized test preparation and score improvement strategy' }
+      ];
+    }
+    
+    // Default exploration for unclear paths
+    return [
+      { title: 'Exploration Path', description: 'Structured approach to discovering your optimal career direction' }
+    ];
+  };
+  
+  // Get conversation progress insights
+  const getConversationInsights = () => {
+    const totalWords = messages.reduce((count, msg) => count + msg.content.split(' ').length, 0);
+    const avgWordsPerMessage = messages.length > 0 ? Math.round(totalWords / messages.length) : 0;
+    const conversationDepth = messages.length > 10 ? 'Deep' : messages.length > 5 ? 'Moderate' : 'Getting Started';
+    
+    return {
+      totalWords,
+      avgWordsPerMessage,
+      conversationDepth,
+      phase: phase === 'milestone_identification' ? 'Goal Discovery' : 'Strategic Planning'
+    };
+  };
+
   // Render chat interface (milestone-chat or intermediate-chat)
   return (
     <div className="app">
-      <div className="chat-container">
-        <div className="chat-header">
-          <div className="header-content">
-            <h1>Ultra<span className="beta">beta</span></h1>
-            <div className="student-info">
-              <span>{studentData.name}</span>
-              <span>{studentData.age} years old</span>
-              <span>{studentData.location}</span>
+      <div className="main-layout">
+        <div className="chat-container">
+          <div className="chat-header">
+            <div className="header-content">
+              <h1>Ultra<span className="beta">beta</span></h1>
+              <div className="student-info">
+                <span>{studentData.name}</span>
+                <span>{studentData.age} years old</span>
+                <span>{studentData.location}</span>
+              </div>
+              <div className="phase-indicator">
+                {phase === 'milestone_identification' && 'Goal Identification'}
+                {phase === 'intermediate_goals' && 'Strategic Planning'}
+              </div>
             </div>
-            <div className="phase-indicator">
-              {phase === 'milestone_identification' && 'Goal Identification'}
-              {phase === 'intermediate_goals' && 'Strategic Planning'}
+          </div>
+
+          <div className="messages-container">
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.type}`}>
+                <div className="message-content">
+                  {message.content}
+                </div>
+              </div>
+            ))}
+            
+            {isLoading && (
+              <div className="message counselor">
+                <div className="message-content">
+                  <div className="typing-indicator">
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                    <div className="typing-dot"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="chat-input-container">
+            {/* Yes/No buttons for extracurricular question */}
+            {showYesNoButtons && (
+              <div className="yes-no-container">
+                <button 
+                  onClick={() => handleECResponse('yes')} 
+                  disabled={isLoading}
+                  className="yes-button"
+                >
+                  Yes, I'd like to share
+                </button>
+                <button 
+                  onClick={() => handleECResponse('no')} 
+                  disabled={isLoading}
+                  className="no-button"
+                >
+                  No, let's continue
+                </button>
+              </div>
+            )}
+            
+            {/* Regular chat input (hidden when showing Yes/No buttons) */}
+            {!showYesNoButtons && (
+              <form onSubmit={sendMessage} className="chat-form">
+                <input
+                  type="text"
+                  value={currentMessage}
+                  onChange={(e) => setCurrentMessage(e.target.value)}
+                  placeholder="Type your response..."
+                  disabled={isLoading}
+                  className="chat-input"
+                />
+                <button 
+                  type="submit" 
+                  disabled={isLoading || !currentMessage.trim()}
+                  className="send-button"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </form>
+            )}
+            
+            <div className="chat-actions">
+              <button 
+                onClick={extractData} 
+                disabled={!sessionId || isLoading}
+                className="extract-button"
+              >
+                View Summary
+              </button>
+              <button onClick={resetApp} className="action-button">
+                New Session
+              </button>
             </div>
           </div>
         </div>
-
-        <div className="messages-container">
-          {messages.map((message) => (
-            <div key={message.id} className={`message ${message.type}`}>
-                          <div className="message-content">
-              {message.content}
+        
+        {/* Available Features Panel */}
+        <div className="features-panel">
+          <div className="features-header">
+            <h3>Available Ultra Features</h3>
+            <div className="features-subtitle">
+              {messages.length < 4 ? 'Continue sharing to unlock your personalized features' : 'Based on our conversation, you\'ll have access to:'}
             </div>
-            </div>
-          ))}
+          </div>
           
-          {isLoading && (
-            <div className="message counselor">
-              <div className="message-content">
-                <div className="typing-indicator">
-                  <div className="typing-dot"></div>
-                  <div className="typing-dot"></div>
-                  <div className="typing-dot"></div>
-                </div>
+          <div className="features-content">
+            {getAvailableFeatures().length === 0 ? (
+              <div className="features-empty">
+                <div className="empty-message">Share more about your goals and interests to see which Ultra features will be available to you.</div>
               </div>
-            </div>
-          )}
-          
-          <div ref={messagesEndRef} />
-        </div>
-
-        <div className="chat-input-container">
-          {/* Yes/No buttons for extracurricular question */}
-          {showYesNoButtons && (
-            <div className="yes-no-container">
-              <button 
-                onClick={() => handleECResponse('yes')} 
-                disabled={isLoading}
-                className="yes-button"
-              >
-                Yes, I'd like to share
-              </button>
-              <button 
-                onClick={() => handleECResponse('no')} 
-                disabled={isLoading}
-                className="no-button"
-              >
-                No, let's continue
-              </button>
-            </div>
-          )}
-          
-          {/* Regular chat input (hidden when showing Yes/No buttons) */}
-          {!showYesNoButtons && (
-            <form onSubmit={sendMessage} className="chat-form">
-              <input
-                type="text"
-                value={currentMessage}
-                onChange={(e) => setCurrentMessage(e.target.value)}
-                placeholder="Type your response..."
-                disabled={isLoading}
-                className="chat-input"
-              />
-              <button 
-                type="submit" 
-                disabled={isLoading || !currentMessage.trim()}
-                className="send-button"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
-                </svg>
-              </button>
-            </form>
-          )}
-          
-          <div className="chat-actions">
-            <button 
-              onClick={extractData} 
-              disabled={!sessionId || isLoading}
-              className="extract-button"
-            >
-              View Summary
-            </button>
-            <button onClick={resetApp} className="action-button">
-              New Session
-            </button>
+            ) : (
+              <div className="features-list">
+                {getAvailableFeatures().map((feature, index) => (
+                  <div key={index} className="feature-item">
+                    <h4 className="feature-title">{feature.title}</h4>
+                    <p className="feature-description">{feature.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         

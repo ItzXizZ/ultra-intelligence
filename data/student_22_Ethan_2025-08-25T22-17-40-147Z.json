@@ -1,0 +1,154 @@
+{
+  "student_info": {
+    "id": 22,
+    "name": "Ethan",
+    "age": "18",
+    "location": "Victoria",
+    "highschool": "St. Michaels University School",
+    "gpa": "3.9",
+    "sat_act": "1530 SAT",
+    "session_date": "2025-08-25T22:17:40.147Z",
+    "conversation_structure": "Goal identification + Strategic counseling + Comprehensive extraction"
+  },
+  "identified_milestone_goals": [
+    "top_10_university_acceptance"
+  ],
+  "extracurriculars": [
+    {
+      "title": "AMC Academy",
+      "description": "Founded a startup making 75k arr",
+      "timestamp": "2025-08-25T22:17:23.907Z"
+    }
+  ],
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi Ethan! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "I want to get into a t10 university!"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I can see you're focused on top 10 university acceptance. Would you like to share some of your extracurricular activities and experiences that relate to these goals? This will help me give you more targeted advice."
+    },
+    {
+      "role": "user",
+      "content": "Yes, I'd like to share my extracurriculars"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! Please add your extracurricular activities one at a time. For each activity, provide a title and description."
+    },
+    {
+      "role": "assistant",
+      "content": "Counselor: That's fantastic, Ethan! With your entrepreneurial spirit and the success of your startup generating $75k ARR, you're already demonstrating the kind of initiative and leadership that top universities value. Given your background, there's a strategic opportunity that could really enhance your application. Would you be interested in exploring how you could leverage your startup experience to develop a compelling personal narrative for your application essays? This could highlight your innovation, problem-solving skills, and impact, setting you apart from other applicants."
+    },
+    {
+      "role": "assistant",
+      "content": "Thanks for sharing! Let's identify some specific next steps to strengthen your profile."
+    },
+    {
+      "role": "assistant",
+      "content": "Counselor: That's fantastic, Ethan! With your entrepreneurial spirit and the success of your startup generating $75k ARR, you're already demonstrating the kind of initiative and leadership that top universities value. Given your background, there's a strategic opportunity that could really enhance your application. Would you be interested in exploring how you could leverage your startup experience to develop a compelling personal narrative for your application essays? This could highlight your innovation, problem-solving skills, and impact, setting you apart from other applicants."
+    }
+  ],
+  "extracted_data_history": [],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 22,
+      "name": "Ethan",
+      "email": "ethan@student.temp",
+      "age": "18",
+      "location": "Victoria",
+      "highschool": "St. Michaels University School",
+      "gpa": 3.9,
+      "satscore": "1530 SAT",
+      "exploration_openness": "medium",
+      "created_at": "2025-08-25T22:16:47.109685",
+      "updated_at": "2025-08-25T22:16:47.109685"
+    },
+    "milestone_goals": [
+      {
+        "id": 11,
+        "student_id": 22,
+        "category_name": "top_10_university_acceptance",
+        "percentage": 1,
+        "updated_at": "2025-08-25T22:17:39.927582"
+      },
+      {
+        "id": 12,
+        "student_id": 22,
+        "category_name": "startup_founding",
+        "percentage": 2,
+        "updated_at": "2025-08-25T22:17:40.276608"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 19,
+        "student_id": 22,
+        "category_name": "college_apps_submit",
+        "percentage": 1,
+        "updated_at": "2025-08-25T22:17:40.404102"
+      },
+      {
+        "id": 20,
+        "student_id": 22,
+        "category_name": "essays_complete",
+        "percentage": 2,
+        "updated_at": "2025-08-25T22:17:40.544625"
+      },
+      {
+        "id": 21,
+        "student_id": 22,
+        "category_name": "startup_experience",
+        "percentage": 3,
+        "updated_at": "2025-08-25T22:17:40.710736"
+      }
+    ],
+    "skills": [
+      {
+        "id": 9,
+        "student_id": 22,
+        "category_name": "leadership_management",
+        "percentage": 1,
+        "updated_at": "2025-08-25T22:17:40.864751"
+      },
+      {
+        "id": 10,
+        "student_id": 22,
+        "category_name": "business_fundamentals",
+        "percentage": 2,
+        "updated_at": "2025-08-25T22:17:41.037743"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 8,
+        "student_id": 22,
+        "category_name": "entrepreneurship_business",
+        "percentage": 1,
+        "updated_at": "2025-08-25T22:17:41.185784"
+      }
+    ],
+    "extracurriculars": [
+      {
+        "id": 26,
+        "student_id": 22,
+        "category_name": "AMC Academy_1756160243907",
+        "description": "Founded a startup making 75k arr",
+        "title": "AMC Academy",
+        "updated_at": "2025-08-25T22:17:25.600748"
+      }
+    ]
+  },
+  "summary": {
+    "total_goals_identified": 5,
+    "total_skills_identified": 2,
+    "total_sectors_identified": 1,
+    "conversation_length": 8,
+    "phase_completed": "intermediate_goals"
+  }
+}

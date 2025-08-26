@@ -61,31 +61,42 @@ EXTRACTION PRINCIPLES:
 - SECTORS: Specific fields they mention or goals imply
 - SKILLS: Concrete capabilities they mention or goals require
 
-SCORING GUIDANCE:
-- High confidence (80-95%): Explicitly stated goals/interests
-- Medium confidence (60-79%): Strongly implied by their goals
-- Lower confidence (40-59%): Logically connected but not directly stated
+BINARY + STACK RANKING APPROACH:
+
+STEP 1 - BINARY DECISION: For each category, decide YES or NO
+- YES: This clearly applies to this student based on their responses
+- NO: This does not apply or was not mentioned
+
+STEP 2 - STACK RANKING: For all YES categories, rank them 1, 2, 3, etc.
+- Lower numbers = higher importance/strength (1 is most important)
+- Rank based on how strongly expressed or central to their goals
+- Use the existing percentage field to store the ranking number
 
 For each category, provide JSON with:
-- category_name: specific category from lists above
-- percentage: 0-100 likelihood/interest score
-- confidence: 0-100 confidence in assessment
+- category_name: specific category from lists above  
+- percentage: ranking number (1, 2, 3, etc.) where 1 = highest priority/most important
+- confidence: 0-100 confidence in the YES/NO decision
+
+IMPORTANT: Only include categories that get a YES decision. Do not include categories that are NO.
 
 IMPORTANT: Focus on the goal hierarchy. If student mentions big goals, always extract implied intermediate milestones and required skills even if not explicitly stated.
 
 Example response format:
 {
   "milestone_goals": [
-    {"category_name": "startup_founding", "percentage": 85, "confidence": 90}
+    {"category_name": "startup_founding", "percentage": 1, "confidence": 90},
+    {"category_name": "top_10_university_acceptance", "percentage": 2, "confidence": 85}
   ],
   "intermediate_milestones": [
-    {"category_name": "academic_record_enhancement", "percentage": 80, "confidence": 85}
+    {"category_name": "academic_record_enhancement", "percentage": 1, "confidence": 85},
+    {"category_name": "research_project_development", "percentage": 2, "confidence": 80}
   ],
   "skills": [
-    {"category_name": "programming_languages", "percentage": 75, "confidence": 80}
+    {"category_name": "programming_languages", "percentage": 1, "confidence": 80},
+    {"category_name": "business_fundamentals", "percentage": 2, "confidence": 75}
   ],
   "sectors": [
-    {"category_name": "software_technology", "percentage": 85, "confidence": 90}
+    {"category_name": "software_technology", "percentage": 1, "confidence": 90}
   ]
 }
 

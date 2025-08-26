@@ -2,10 +2,10 @@
   "name": "ultra-intelligence-chatbot",
   "version": "1.0.0",
   "description": "Terminal-based chatbot system with dual AI models for conversation and data extraction",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node --no-deprecation index.js",
-    "dev": "nodemon --no-deprecation index.js",
+    "start": "node --no-deprecation server.js",
+    "dev": "nodemon --no-deprecation server.js",
     "setup-db": "node --no-deprecation setup-database.js",
     "test": "node --no-deprecation test-system.js",
     "ui": "cd ui && npm start",

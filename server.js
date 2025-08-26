@@ -2,12 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
-const { 
-    extractComprehensiveData, 
-    saveComprehensiveData, 
-    getComprehensiveStudentData,
-    extractStudentDataToFile 
-} = require('./dataExtraction');
 require('dotenv').config();
 
 const app = express();
@@ -27,11 +21,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Simplified categories - focusing on the two main goal types
-const GOAL_CATEGORIES = [
-    'MILESTONE_GOALS',      // 2-5 year goals
-    'INTERMEDIATE_MILESTONES' // 3 months - 2 year stepping stones
-];
+// Goal-centric conversation system - no longer using category arrays
 
 // Store active sessions (in production, use Redis or database)
 const activeSessions = new Map();
@@ -44,7 +34,7 @@ const activeSessions = new Map();
 
 // Milestone identification prompt - focused on conversation flow
 const MILESTONE_IDENTIFICATION_PROMPT = `
-You are an AI counselor helping students identify their long-term goals. Be direct and focused.
+You are an AI counselor that needs to identify the students goals. 
 
 If this is the first message, greet them warmly and ask this EXACT question:
 "Hi! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
@@ -61,92 +51,58 @@ Key milestone categories to identify:
 - Alternative paths (workforce entry, service year, apprenticeships)
 - Scholarships and financial aid
 
-Focus on being efficient and moving the conversation forward quickly.`;
+Focus on being efficient and moving the conversation forward quickly.
 
-// Strategic counseling system - focused on natural conversation
-const INTERMEDIATE_MILESTONE_PROMPT = `
-You are a strategic college counselor with expertise in guiding high-achieving students toward elite university admission. Your role is to naturally guide students through strategic planning conversations that identify actionable next steps.
+YOUR ONLY GOAL IS TO IDENTIFY THE STUDENTS GOALS. YOU DONT WANT TO HELP THE STUDENT YET JUST IDENTIFY THE MACRO AND MICRO GOALS`;
 
-CORE APPROACH: Offer valuable opportunities and insights rather than interrogating about current status. Be conversational, helpful, and strategic.
+// Simplified counselor system
+const COUNSELOR_PROMPT = `
+You are a goal identifier bot following focused questionnaire to identify the students goals. Don't give advice. JUST ask questions to get a better sense of their GOALS
 
-STRATEGIC AREAS TO EXPLORE (keep these in mind but don't explicitly reference):
+INSTRUCTIONS:
+- Carefully read the conversation history and student context.
+- Acknowledge the student's last message briefly.
+- Ask ONE next most relevant intermediate-goal question.
+- Do NOT repeat topics already covered or explicitly declined in the conversation.
+- If a topic is already satisfied (e.g., high SAT), do not bring it up again.
+- Tailor questions to the student's milestone goals and extracurriculars.
+- CRITICAL: If you've asked 3+ questions about the same topic/theme, MUST transition to a different area.
 
-1. APPLICATION STRATEGY: Essay development, recommendation cultivation, interview prep, early decision strategy
-2. ACADEMIC POSITIONING: Test score optimization, course rigor, summer programs, academic competitions
-3. RESEARCH ADVANCEMENT: Independent projects, publication opportunities, conference presentations, lab leadership
-4. PROFESSIONAL DEVELOPMENT: Industry connections, mentorship, internship progression, job shadowing
-5. LEADERSHIP BUILDING: Club founding, officer positions, community initiatives, social impact projects
-6. COMPETITION EXCELLENCE: Science olympiad, math contests, debate, hackathons, research competitions
+TOPIC TRANSITION RULES:
+- After 3 questions on startup/business → switch to academics, competitions, or leadership
+- After 3 questions on academics → switch to extracurriculars, skills, or community service
+- After 3 questions on community service → switch to academic goals, research, or personal projects
+- After 3 questions on any theme → explore a completely different goal area
 
-CONVERSATION STYLE:
-- Be natural and conversational, not mechanical
-- Offer specific opportunities and suggestions
-- Use "Would you be interested in..." instead of "Have you..."
-- Acknowledge their responses before pivoting
-- Provide concrete value and actionable ideas
-- Connect suggestions to their specific goals naturally
+RESPONSE FORMAT:
+- 1–2 sentences, up to 30 words total.
+- Conversational, natural, and specific to their situation.
+- No bullet points. No lists. No role prefixes.
 
-DESIRABLE CONVERSATION EXAMPLES:
+TOPIC AREAS TO EXPLORE:
+- Academic goals (research, competitions, advanced courses)
+- Leadership roles and responsibilities
+- Skills development (technical, creative, interpersonal)
+- Community service and social impact
+- Personal projects and creative pursuits
+- Professional experience and internships
+- Awards and recognition goals
 
-GOOD APPROACHES:
+ALWAYS ALWAYS ASK QUESTIONS ABOUT GOALS. NOTHING ELSE. FOR EXAMPLE THIS IS BAD: 
 
-Example 1 - Application Focus:
-Student: "I want to work on my university applications."
-Counselor: "That's smart timing! For someone with your research background, I'd recommend focusing on crafting a compelling narrative that connects your AI and nanomedicine work. Would you be interested in exploring some essay strategies that could help you stand out to admissions committees at top universities?"
+-"Impressive leadership experience! Are there any academic competitions or advanced courses you're planning to pursue to further enhance your application?"
 
-Example 2 - Research Advancement:
-Student: "I'm working on research with my boss."
-Counselor: "That's fantastic that you're already co-authoring! Since you mentioned wanting to write your own research, there are some strategic ways to develop independent projects that could really strengthen your profile. Would you be interested in discussing how to identify research gaps you could explore on your own?"
+because it doesn't ask about goals! IT just asks for background which is relevant to attaining the students goals. 
 
-Example 3 - Leadership Development:
-Student: "I want to start a club related to CS/bio."
-Counselor: "A CS/bio club is a brilliant idea - that intersection is exactly what top universities are looking for. I know some specific approaches for launching clubs that actually make an impact and catch admissions attention. Would you be interested in hearing about strategies that go beyond just 'starting another club'?"
+EXAMPLES:
+- "That's great progress on community partnerships! What academic short-termgoals are you focusing on this year for your Stanford application?"
+- "Your startup work is impressive. What leadership roles are you pursuing to complement your entrepreneurial experience? Do you have any goals for where you want to be in a few months?"
+- "Nice! Beyond service work, goals do you have for expanding your arsinal of ECs? Do you want to get an internship?"
 
-Example 4 - Strategic Pivoting:
-Student: "I haven't started planning yet. I want to work on applications."
-Counselor: "Absolutely, applications should be the priority right now. Since you have such unique research experience, there are some essay approaches that could really differentiate you from other applicants. Would you be interested in discussing how to craft a narrative that showcases your interdisciplinary thinking?"
+ MOST IMPORTANTLY, just identify different goal  nothing else ask about goals incoporate the goal language into most questions.`;
 
-AVOID THESE PATTERNS:
-- "Since we've discussed X, let's focus on Y milestone..."
-- "Have you started/considered/looked into..."
-- Explicitly referencing milestone categories
-- Generic transitions without acknowledgment
-- Mechanical checklist approach
-
-STRATEGIC CONVERSATION PATTERNS:
-
-PATTERN 1 - ACKNOWLEDGE + BUILD + OFFER:
-"[Specific acknowledgment of their response] + [Strategic insight based on their profile] + Would you be interested in [specific opportunity]?"
-
-PATTERN 2 - VALIDATE + PIVOT + VALUE:
-"[Validate their priority] + [Connect to their unique strengths] + Would you like to explore [concrete next step]?"
-
-PATTERN 3 - EXPERTISE + OPPORTUNITY:
-"[Show understanding of their field/interests] + [Specific strategic opportunity] + Would you be interested in [actionable approach]?"
-
-RESPONSE QUALITY CHECKLIST:
-✓ Acknowledges their specific response (not generic)
-✓ Offers concrete value or insight
-✓ Uses "Would you be interested in..." phrasing
-✓ Connects to their top university goal naturally
-✓ Provides specific, actionable suggestions
-✓ Feels conversational, not mechanical
-✗ Avoids milestone terminology
-✗ Avoids "Have you..." questions
-✗ Avoids generic transitions
-
-STRATEGIC FOCUS AREAS (keep in mind but don't mention explicitly):
-- Essay narrative development and storytelling
-- Research independence and publication pathways
-- Leadership impact and club founding strategies
-- Competition participation and achievement
-- Professional network building and mentorship
-- Academic positioning and course optimization
-
-Remember: You're an expert counselor offering insider knowledge and strategic opportunities. Every response should feel valuable and make the student think "I hadn't considered that approach before."`;
-
-// Improved milestone goal extraction function
-async function extractMilestoneGoals(userInput) {
+// Milestone goal classification (for conversation only)
+async function classifyMilestoneGoals(userInput) {
     try {
         const extractionPrompt = `
 Analyze this student response about their 2-5 year goals and identify the most relevant milestone goals.
@@ -155,10 +111,13 @@ Student Response: "${userInput}"
 
 Look for mentions of:
 - Specific universities (MIT, Stanford, Harvard, etc.) 
+- University tiers ("top 10", "elite", "Ivy League", "prestigious")
 - Career fields (engineering, medicine, business, etc.)
 - Entrepreneurship/startup aspirations
 - Graduate school plans
 - Professional goals
+
+IMPORTANT: "top 10 university", "elite university", "prestigious college" should ALL map to "top_10_university_acceptance"
 
 Map to these milestone categories:
 
@@ -182,6 +141,9 @@ Examples:
 - "MIT mechanical engineering" → ["top_10_university_acceptance", "specialized_program_acceptance"]
 - "startup after college" → ["startup_founding", "competitive_university_acceptance"]
 - "medical school" → ["medical_school_path", "competitive_university_acceptance"]
+- "top 10 university" → ["top_10_university_acceptance"]
+- "get into a top university" → ["top_10_university_acceptance"]
+- "elite college" → ["top_10_university_acceptance"]
 
 Return JSON array of 1-3 most relevant goals: ["goal1", "goal2", "goal3"]
 If unclear, return empty array: []
@@ -193,7 +155,7 @@ If unclear, return empty array: []
                 { role: 'system', content: 'You are a goal extraction AI. Return only valid JSON arrays with milestone goal names.' },
                 { role: 'user', content: extractionPrompt }
             ],
-            max_tokens: 150,
+            max_tokens: 100,
             temperature: 0.1
         });
 
@@ -207,7 +169,7 @@ If unclear, return empty array: []
             return [];
         }
     } catch (error) {
-        console.error('Error extracting milestone goals:', error);
+        console.error('Error classifying milestone goals:', error);
         return [];
     }
 }
@@ -224,8 +186,9 @@ async function getMilestoneConversation(sessionId, userInput, isFirstQuestion = 
             const schoolInfo = session.studentHighschool ? ` attending ${session.studentHighschool}` : '';
             specificPrompt = `This is the first conversation with ${session.studentName}, age ${session.studentAge}, from ${session.studentLocation}${schoolInfo}. Start the milestone identification conversation naturally by greeting them warmly and asking the exact question about their 2-5 year goals.`;
         } else {
-            // Extract milestone goals from their response
-            const extractedGoals = await extractMilestoneGoals(userInput);
+            // Classify milestone goals from their response (conversation-only)
+            const extractedGoals = await classifyMilestoneGoals(userInput);
+            console.log('Extracted goals from "' + userInput + '":', extractedGoals);
             
             if (extractedGoals.length > 0) {
                 // Store the identified milestones
@@ -249,6 +212,7 @@ async function getMilestoneConversation(sessionId, userInput, isFirstQuestion = 
                 
                 return response;
             } else {
+                console.log('No goals extracted, continuing milestone identification');
                 specificPrompt = `Continue the milestone identification conversation. The student just said: "${userInput}". They haven't clearly stated their goals yet, so ask a follow-up question to help them clarify their 2-5 year aspirations.`;
             }
         }
@@ -261,7 +225,7 @@ async function getMilestoneConversation(sessionId, userInput, isFirstQuestion = 
         const response = await openai.chat.completions.create({
             model: 'gpt-4o',
             messages: messages,
-            max_tokens: 200,
+            max_tokens: 250,
             temperature: 0.3
         });
 
@@ -289,101 +253,215 @@ async function getIntermediateConversation(sessionId, userInput) {
 
         const milestoneGoals = session.identifiedMilestones || [];
         const extracurriculars = session.extracurriculars || [];
-        
-        // Format milestone goals for the prompt
-        const goalsList = milestoneGoals.map(goal => goal.replace(/_/g, ' ')).join(', ');
-        
-        // Format extracurriculars for the prompt
-        const extracurricularsList = extracurriculars
-            .map(ec => `${ec.title}: ${ec.description}`)
-            .join('; ');
-        
-        // Format conversation history for context
-        const recentHistory = session.conversationHistory.slice(-8); // Last 8 messages for context
-        const historyText = recentHistory.length > 0 ? 
-            `\nRECENT CONVERSATION:\n${recentHistory.map(msg => `${msg.role === 'user' ? 'Student' : 'Counselor'}: ${msg.content}`).join('\n')}\n` : 
-            '\nRECENT CONVERSATION: [This is the start of intermediate planning]\n';
 
-        console.log('Conversation history for AI:', historyText);
+        const milestoneText = milestoneGoals.map(goal => goal.replace(/_/g, ' ')).join(', ') || 'a competitive university';
+        const extracurricularsText = extracurriculars.map(ec => `${ec.title}: ${ec.description}`).join('; ');
+
+        // Provide conversation history for context
+        const recentHistory = session.conversationHistory.slice(-8);
+
+        const guidance = `Context:\nMilestones: ${milestoneText}\nExtracurriculars: ${extracurricularsText || 'None shared'}\nStudent said: "${userInput}"`;
+
+        const messages = [
+            { role: 'system', content: COUNSELOR_PROMPT },
+            ...recentHistory,
+            { role: 'user', content: guidance }
+        ];
+
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o',
+            messages: messages,
+            max_tokens: 160,
+            temperature: 0.3,
+            stream: false
+        });
+
+        const aiResponse = response.choices[0].message.content;
+        
+        // Store conversation
+        session.conversationHistory.push({ role: 'user', content: userInput });
+        session.conversationHistory.push({ role: 'assistant', content: aiResponse });
+
+        return aiResponse;
+    } catch (error) {
+        console.error('Error getting intermediate response:', error);
+        return "Is preparing for college applications one of your goals?";
+    }
+}
+
+// Streaming versions of conversation functions
+async function getMilestoneConversationStream(sessionId, userInput, isFirstQuestion = false, sendSSE) {
+    try {
+        const session = activeSessions.get(sessionId);
+        if (!session) throw new Error('Session not found');
 
         let specificPrompt;
         
-        if (userInput === "Starting intermediate goals conversation" || userInput === "Starting intermediate goals conversation with extracurriculars" || userInput === "Starting intermediate goals conversation without extracurriculars") {
-            specificPrompt = `STUDENT CONTEXT:
-- Goal: ${goalsList}
-- Background: ${extracurricularsList}
-
-CONVERSATION STARTER: This student wants to get into top universities and has shared their activities. Now offer them something valuable and specific.
-
-EXAMPLE APPROACHES:
-- "With your research experience, I think you could really strengthen your profile by [specific suggestion]. Would you be interested in exploring [specific opportunity]?"
-- "Given your background in [their area], there's a strategic move that could set you apart from other applicants. Would you like to hear about [specific strategy]?"
-
-INSTRUCTIONS:
-1. Acknowledge their impressive background briefly
-2. Offer ONE specific, valuable opportunity or strategy
-3. Ask if they'd be interested in exploring it
-4. Be conversational and helpful, not mechanical
-
-Choose the most impactful area to focus on first based on their profile.${historyText}`;
+        if (isFirstQuestion) {
+            const schoolInfo = session.studentHighschool ? ` attending ${session.studentHighschool}` : '';
+            specificPrompt = `This is the first conversation with ${session.studentName}, age ${session.studentAge}, from ${session.studentLocation}${schoolInfo}. Start the milestone identification conversation naturally by greeting them warmly and asking the exact question about their 2-5 year goals.`;
         } else {
-            specificPrompt = `STUDENT CONTEXT:
-- Goal: ${goalsList}
-- Background: ${extracurricularsList}
-- Their response: "${userInput}"
-
-CONVERSATION FLOW:
-1. Acknowledge their response genuinely (don't just say "great" - be specific)
-2. Offer a NEW valuable opportunity or insight (different from what was just discussed)
-3. Ask "Would you be interested in..." not "Have you..."
-
-STRATEGIC AREAS TO EXPLORE (choose one NOT yet discussed):
-- Application essay strategy and narrative development
-- Research publication and presentation opportunities  
-- Leadership roles and club founding
-- Academic competition participation
-- Professional networking and mentorship
-- Summer program applications
-- Test score optimization strategies
-
-EXAMPLE GOOD RESPONSES:
-"That makes perfect sense - applications are definitely the priority right now. Since you have such strong research experience, I think there are some essay approaches that could really make your application stand out. Would you be interested in discussing strategies for crafting a compelling narrative around your AI and nanomedicine work?"
-
-BE NATURAL, HELPFUL, AND SPECIFIC. Avoid mentioning "milestones" explicitly.${historyText}`;
+            // Classify milestone goals from their response (conversation-only)
+            const extractedGoals = await classifyMilestoneGoals(userInput);
+            console.log('Extracted goals from "' + userInput + '":', extractedGoals);
+            
+            if (extractedGoals.length > 0) {
+                // Store the identified milestones
+                session.identifiedMilestones = extractedGoals;
+                
+                // Create human-readable goal names for the response
+                const goalNames = extractedGoals.map(goal => {
+                    return goal.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2');
+                });
+                
+                const goalList = goalNames.length === 1 ? goalNames[0] : 
+                               goalNames.length === 2 ? `${goalNames[0]} and ${goalNames[1]}` :
+                               `${goalNames.slice(0, -1).join(', ')}, and ${goalNames[goalNames.length - 1]}`;
+                
+                const response = `Great! I can see you're focused on ${goalList}. Would you like to share some of your extracurricular activities and experiences that relate to these goals? This will help me give you more targeted advice.`;
+                
+                // Store conversation and transition to extracurricular question
+                session.conversationHistory.push({ role: 'user', content: userInput });
+                session.conversationHistory.push({ role: 'assistant', content: response });
+                session.phase = 'extracurricular_question';
+                
+                // Stream the response word by word
+                streamResponseSSE(sendSSE, response);
+                return response;
+            } else {
+                console.log('No goals extracted, continuing milestone identification');
+                specificPrompt = `Continue the milestone identification conversation. The student just said: "${userInput}". They haven't clearly stated their goals yet, so ask a follow-up question to help them clarify their 2-5 year aspirations.`;
+            }
         }
 
         const messages = [
-            { role: 'system', content: INTERMEDIATE_MILESTONE_PROMPT },
+            { role: 'system', content: MILESTONE_IDENTIFICATION_PROMPT },
             { role: 'user', content: specificPrompt }
         ];
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4o',
             messages: messages,
-            max_tokens: 150,
-            temperature: 0.05
+            max_tokens: 250,
+            temperature: 0.3,
+            stream: true // Enable streaming
         });
 
-        const aiResponse = response.choices[0].message.content;
+        let aiResponse = '';
         
-        // Store conversation (but not if it's the initial prompt)
-        if (!userInput.startsWith("Starting intermediate goals conversation")) {
+        // Process streaming response
+        for await (const chunk of response) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+                aiResponse += content;
+                // Send each chunk to the client
+                sendSSE({
+                    type: 'content',
+                    content: content
+                });
+            }
+        }
+        
+        // Store conversation
+        if (!isFirstQuestion) {
             session.conversationHistory.push({ role: 'user', content: userInput });
         }
         session.conversationHistory.push({ role: 'assistant', content: aiResponse });
 
-        // Note: Data extraction is now handled separately via the summary endpoint
+        return aiResponse;
+    } catch (error) {
+        console.error('Error getting milestone streaming response:', error);
+        const fallback = "What are your biggest goals for the next few years?";
+        streamResponseSSE(sendSSE, fallback);
+        return fallback;
+    }
+}
+
+async function getIntermediateConversationStream(sessionId, userInput, sendSSE) {
+    try {
+        const session = activeSessions.get(sessionId);
+        if (!session) throw new Error('Session not found');
+
+        const milestoneGoals = session.identifiedMilestones || [];
+        const extracurriculars = session.extracurriculars || [];
+
+        const milestoneText = milestoneGoals.map(goal => goal.replace(/_/g, ' ')).join(', ') || 'a competitive university';
+        const extracurricularsText = extracurriculars.map(ec => `${ec.title}: ${ec.description}`).join('; ');
+
+        // Provide conversation history for context
+        const recentHistory = session.conversationHistory.slice(-8);
+
+        const guidance = `Context:\nMilestones: ${milestoneText}\nExtracurriculars: ${extracurricularsText || 'None shared'}\nStudent said: "${userInput}"`;
+
+        const messages = [
+            { role: 'system', content: COUNSELOR_PROMPT },
+            ...recentHistory,
+            { role: 'user', content: guidance }
+        ];
+
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o',
+            messages: messages,
+            max_tokens: 160,
+            temperature: 0.3,
+            stream: true
+        });
+
+        let aiResponse = '';
+        
+        // Process streaming response
+        for await (const chunk of response) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+                aiResponse += content;
+                // Send each chunk to the client
+                sendSSE({
+                    type: 'content',
+                    content: content
+                });
+            }
+        }
+        
+        // Store conversation
+        session.conversationHistory.push({ role: 'user', content: userInput });
+        session.conversationHistory.push({ role: 'assistant', content: aiResponse });
 
         return aiResponse;
     } catch (error) {
-        console.error('Error getting intermediate response:', error);
-        return "What specific steps are you taking this year to work toward your goals?";
+        console.error('Error getting intermediate streaming response:', error);
+        const fallback = "Is preparing for college applications one of your goals?";
+        streamResponseSSE(sendSSE, fallback);
+        return fallback;
+    }
+}
+
+// Helper function to stream a pre-formed response
+function streamResponse(res, text) {
+    const words = text.split(' ');
+    for (let i = 0; i < words.length; i++) {
+        const content = (i === 0) ? words[i] : ' ' + words[i];
+        res.write(`data: ${JSON.stringify({
+            type: 'content',
+            content: content
+        })}\n\n`);
+    }
+}
+
+// Helper function to stream a pre-formed response using SSE callback
+function streamResponseSSE(sendSSE, text) {
+    const words = text.split(' ');
+    for (let i = 0; i < words.length; i++) {
+        const content = (i === 0) ? words[i] : ' ' + words[i];
+        sendSSE({
+            type: 'content',
+            content: content
+        });
     }
 }
 
 // Routes
 
-// Start a new interview session
+// Legacy interview endpoint - redirects to new goal-centric system
 app.post('/api/start-interview', async (req, res) => {
     try {
         const { name, email } = req.body;
@@ -406,35 +484,28 @@ app.post('/api/start-interview', async (req, res) => {
 
         const studentId = data[0].id;
         
-        // Create session
+        // Create simplified session for goal conversation
         const sessionId = Date.now().toString();
         const session = {
             studentId,
             studentName: name,
             studentEmail: email,
-            currentCategoryIndex: 0,
-            questionsInCategory: 0,
-            totalQuestionsAsked: 0,
             conversationHistory: [],
-            categoryResponses: {
-                MILESTONE_GOALS: [],
-                INTERMEDIATE_MILESTONES: [],
-                SECTORS: [],
-                SKILLS: []
-            },
-            extractedDataHistory: []
+            identifiedMilestones: [],
+            extracurriculars: [],
+            phase: 'milestone_identification'
         };
 
         activeSessions.set(sessionId, session);
 
-        // Get first question
-        const firstResponse = await getConversationResponse(sessionId, "", true);
+        // Get first milestone question
+        const firstResponse = await getMilestoneConversation(sessionId, "", true);
         
         res.json({
             sessionId,
             studentId,
             message: firstResponse,
-            status: getConversationStatus(sessionId)
+            phase: 'milestone_identification'
         });
 
     } catch (error) {
@@ -482,7 +553,6 @@ app.post('/api/submit-basic-info', async (req, res) => {
             studentGpa: gpa,
             studentSatAct: satAct,
             conversationHistory: [],
-            extractedDataHistory: [],
             identifiedMilestones: [],
             extracurriculars: [],
             phase: 'milestone_identification'
@@ -683,26 +753,7 @@ app.post('/api/submit-extracurriculars', async (req, res) => {
         // Store extracurriculars in session
         session.extracurriculars = extracurriculars;
 
-        // Save extracurriculars to database
-        try {
-            for (const [category, activities] of Object.entries(extracurriculars)) {
-                if (activities && activities.length > 0) {
-                    const description = Array.isArray(activities) ? activities.join('; ') : activities.toString();
-                    
-                    await supabase
-                        .from('extracurriculars')
-                        .upsert({
-                            student_id: session.studentId,
-                            category_name: category,
-                            description: description,
-                            title: category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-                        }, { onConflict: 'student_id,category_name' });
-                }
-            }
-        } catch (dbError) {
-            console.error('Error saving extracurriculars to database:', dbError);
-            // Continue even if database save fails
-        }
+        // No extraction here; database persistence for legacy payload kept minimal
 
         // Transition to intermediate goals phase
         session.phase = 'intermediate_goals';
@@ -722,7 +773,7 @@ app.post('/api/submit-extracurriculars', async (req, res) => {
     }
 });
 
-// Send message and get response
+// Legacy endpoint - redirects to new system
 app.post('/api/send-message', async (req, res) => {
     try {
         const { sessionId, message } = req.body;
@@ -736,15 +787,20 @@ app.post('/api/send-message', async (req, res) => {
             return res.status(404).json({ error: 'Session not found' });
         }
 
-        // Get conversation response
-        const conversationResponse = await getConversationResponse(sessionId, message, false);
+        let response;
         
-        // Note: Data extraction is now handled separately via the summary endpoint
+        if (session.phase === 'milestone_identification') {
+            response = await getMilestoneConversation(sessionId, message, false);
+        } else if (session.phase === 'intermediate_goals') {
+            response = await getIntermediateConversation(sessionId, message);
+        } else {
+            response = "I'm not sure what phase of the conversation we're in. Can you tell me about your goals?";
+        }
 
         res.json({
-            message: conversationResponse,
-            status: getConversationStatus(sessionId),
-            extractedData
+            message: response,
+            phase: session.phase,
+            identifiedMilestones: session.identifiedMilestones || []
         });
 
     } catch (error) {
@@ -793,11 +849,87 @@ app.post('/api/send-message-new', async (req, res) => {
     }
 });
 
-function shouldTransitionToExtracurriculars(session, message) {
-    // Simple logic - after 2-3 exchanges about goals, transition
-    const goalConversationLength = session.conversationHistory.filter(msg => msg.role === 'user').length;
-    return goalConversationLength >= 2;
-}
+// Streaming message endpoint using Server-Sent Events
+app.post('/api/send-message-stream', async (req, res) => {
+    try {
+        const { sessionId, message } = req.body;
+        
+        if (!sessionId || !message) {
+            return res.status(400).json({ error: 'Session ID and message are required' });
+        }
+
+        const session = activeSessions.get(sessionId);
+        if (!session) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+
+        // Set up Server-Sent Events with proper headers
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Cache-Control, Content-Type',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+        });
+
+        // Send initial message data
+        const sendSSE = (data) => {
+            res.write(`data: ${JSON.stringify(data)}\n\n`);
+        };
+
+        sendSSE({
+            type: 'start',
+            phase: session.phase,
+            identifiedMilestones: session.identifiedMilestones || [],
+            sessionInfo: {
+                studentName: session.studentName,
+                conversationLength: session.conversationHistory.length
+            }
+        });
+
+        // Get streaming response
+        let response;
+        
+        if (session.phase === 'milestone_identification') {
+            response = await getMilestoneConversationStream(sessionId, message, false, sendSSE);
+        } else if (session.phase === 'intermediate_goals') {
+            response = await getIntermediateConversationStream(sessionId, message, sendSSE);
+        } else {
+            // Send non-streaming fallback
+            const fallbackResponse = "I'm not sure what phase of the conversation we're in. Can you tell me about your goals?";
+            sendSSE({
+                type: 'content',
+                content: fallbackResponse
+            });
+            response = fallbackResponse;
+        }
+
+        // Send completion message
+        sendSSE({
+            type: 'complete',
+            message: response,
+            phase: session.phase,
+            identifiedMilestones: session.identifiedMilestones || []
+        });
+
+        res.end();
+
+    } catch (error) {
+        console.error('Error processing streaming message:', error);
+        try {
+            res.write(`data: ${JSON.stringify({
+                type: 'error',
+                error: 'Failed to process message'
+            })}\n\n`);
+        } catch (writeError) {
+            console.error('Error writing error response:', writeError);
+        }
+        res.end();
+    }
+});
+
+// Removed outdated transition helper; flow is explicit via endpoints
 
 // Get identified milestone goals for extracurricular form
 app.get('/api/milestone-goals/:sessionId', (req, res) => {
@@ -849,16 +981,6 @@ app.get('/api/get-student-data/:sessionId', async (req, res) => {
             return res.status(404).json({ error: 'Session not found' });
         }
 
-        // Get comprehensive data from database using the new extraction service
-        const comprehensiveData = await getComprehensiveStudentData(session.studentId);
-
-        console.log('Database query results:');
-        console.log('Milestone goals:', comprehensiveData?.milestone_goals?.length || 0);
-        console.log('Intermediate milestones:', comprehensiveData?.intermediate_milestones?.length || 0);
-        console.log('Skills:', comprehensiveData?.skills?.length || 0);
-        console.log('Sectors:', comprehensiveData?.sectors?.length || 0);
-        console.log('Extracurriculars:', comprehensiveData?.extracurriculars?.length || 0);
-
         const studentData = {
             student_info: {
                 name: session.studentName,
@@ -866,16 +988,13 @@ app.get('/api/get-student-data/:sessionId', async (req, res) => {
                 location: session.studentLocation,
                 highschool: session.studentHighschool,
                 gpa: session.studentGpa,
-                sat_act: session.studentSatAct,
-                database_info: comprehensiveData?.student_info || null
+                sat_act: session.studentSatAct
             },
             identified_milestones: session.identifiedMilestones || [],
             extracurriculars: session.extracurriculars || [],
-            comprehensive_database_data: comprehensiveData,
             conversation_length: session.conversationHistory.length,
             phase: session.phase,
-            conversation_history: session.conversationHistory || [],
-            extracted_data_history: session.extractedDataHistory || []
+            conversation_history: session.conversationHistory || []
         };
 
         res.json(studentData);
@@ -886,31 +1005,7 @@ app.get('/api/get-student-data/:sessionId', async (req, res) => {
     }
 });
 
-// Extract data to file
-app.post('/api/extract-data/:sessionId', async (req, res) => {
-    try {
-        const { sessionId } = req.params;
-        const session = activeSessions.get(sessionId);
-        
-        if (!session) {
-            return res.status(404).json({ error: 'Session not found' });
-        }
-
-        const filepath = await extractStudentDataToFile(session);
-        
-        res.json({
-            success: true,
-            filepath,
-            message: 'Data extracted successfully'
-        });
-
-    } catch (error) {
-        console.error('Error extracting data:', error);
-        res.status(500).json({ error: 'Failed to extract data' });
-    }
-});
-
-// New comprehensive summary extraction endpoint
+// Generate comprehensive summary endpoint
 app.post('/api/generate-summary/:sessionId', async (req, res) => {
     try {
         const { sessionId } = req.params;
@@ -920,67 +1015,73 @@ app.post('/api/generate-summary/:sessionId', async (req, res) => {
             return res.status(404).json({ error: 'Session not found' });
         }
 
-        console.log('🔄 Starting comprehensive data extraction for summary...');
-        
-        // Extract comprehensive data from conversation history
-        const sessionInfo = {
+        console.log('🔍 Generating summary for session:', sessionId);
+
+        // Import the data extraction functions
+        const { extractComprehensiveData, saveComprehensiveData, getComprehensiveStudentData } = require('./dataExtraction');
+
+        // Extract comprehensive data from conversation
+        const extractedData = await extractComprehensiveData(session.conversationHistory, {
             studentName: session.studentName,
-            studentAge: session.studentAge,
-            studentLocation: session.studentLocation,
-            studentHighschool: session.studentHighschool
+            studentId: session.studentId,
+            phase: session.phase
+        });
+
+        // Save extracted data to database if any was found
+        if (extractedData && session.studentId) {
+            await saveComprehensiveData(session.studentId, extractedData);
+            console.log('✅ Extracted data saved to database');
+        }
+
+        // Get comprehensive student data from database
+        const comprehensiveData = await getComprehensiveStudentData(session.studentId);
+
+        // Combine session data with database data
+        const fullData = {
+            student_info: {
+                name: session.studentName,
+                age: session.studentAge,
+                location: session.studentLocation,
+                highschool: session.studentHighschool,
+                gpa: session.studentGpa,
+                sat_act: session.studentSatAct
+            },
+            identified_milestones: session.identifiedMilestones || [],
+            extracurriculars: session.extracurriculars || [],
+            conversation_length: session.conversationHistory.length,
+            phase: session.phase,
+            conversation_history: session.conversationHistory || [],
+            // Add database data
+            milestone_goals: comprehensiveData?.milestone_goals || [],
+            intermediate_milestones: comprehensiveData?.intermediate_milestones || [],
+            skills: comprehensiveData?.skills || [],
+            sectors: comprehensiveData?.sectors || [],
+            database_extracurriculars: comprehensiveData?.extracurriculars || [],
+            extracted_data_history: session.extractedDataHistory || []
         };
-        
-        const extractedData = await extractComprehensiveData(
-            session.conversationHistory, 
-            sessionInfo
-        );
-        
-        if (!extractedData) {
-            return res.status(500).json({ error: 'Failed to extract comprehensive data' });
-        }
-        
-        // Save comprehensive data to database
-        const saveSuccess = await saveComprehensiveData(
-            session.studentId, 
-            extractedData, 
-            sessionInfo
-        );
-        
-        if (!saveSuccess) {
-            return res.status(500).json({ error: 'Failed to save comprehensive data' });
-        }
-        
-        // Extract to file for backup
-        const filepath = await extractStudentDataToFile(session);
-        
-        // Get final comprehensive data for response
-        const finalData = await getComprehensiveStudentData(session.studentId);
-        
+
+        console.log('✅ Summary generated successfully');
+
         res.json({
             success: true,
-            message: 'Comprehensive summary generated successfully',
-            extractedData,
-            comprehensiveData: finalData,
-            filepath,
-            summary: {
-                milestone_goals_count: extractedData.milestone_goals?.length || 0,
-                intermediate_milestones_count: extractedData.intermediate_milestones?.length || 0,
-                skills_count: extractedData.skills?.length || 0,
-                sectors_count: extractedData.sectors?.length || 0,
-                conversation_length: session.conversationHistory.length
-            }
+            summary: 'Comprehensive data extraction completed',
+            comprehensiveData: fullData,
+            extractedData: extractedData
         });
 
     } catch (error) {
-        console.error('❌ Error generating comprehensive summary:', error);
-        res.status(500).json({ 
-            error: 'Failed to generate comprehensive summary',
-            details: error.message 
-        });
+        console.error('Error generating summary:', error);
+        res.status(500).json({ error: 'Failed to generate summary', details: error.message });
     }
 });
 
-// Helper functions (adapted from index.js)
+// Extract data to file
+// Removed server-side extraction; handled elsewhere via dedicated script
+
+// New comprehensive summary extraction endpoint
+// Removed server-side summary generation; extraction handled by external script/button
+
+// Helper functions (conversation status only)
 
 function getConversationStatus(sessionId) {
     const session = activeSessions.get(sessionId);
@@ -994,139 +1095,7 @@ function getConversationStatus(sessionId) {
     };
 }
 
-async function getConversationResponse(sessionId, userInput, isFirstQuestion = false) {
-    try {
-        const session = activeSessions.get(sessionId);
-        if (!session) throw new Error('Session not found');
-
-        const status = getConversationStatus(sessionId);
-        
-        if (status.isComplete) {
-            return "Interview complete! You've shared amazing insights about your goals. Your data has been saved.";
-        }
-
-        let specificPrompt;
-        
-        // Format conversation history for context
-        const recentHistory = session.conversationHistory.slice(-10);
-        const historyText = recentHistory.length > 0 ? 
-            `\nCONVERSATION HISTORY:\n${recentHistory.map(msg => `${msg.role === 'user' ? 'Student' : 'Counselor'}: ${msg.content}`).join('\n')}\n` : 
-            '\nCONVERSATION HISTORY: [This is the start of the conversation]\n';
-        
-        if (isFirstQuestion) {
-            specificPrompt = `This is question 1 of 16 in the MILESTONE_GOALS category. Ask about their biggest goals for the next 2-10 years. Include specific examples in parentheses to help guide them, such as: (getting into specific colleges, pursuing certain careers, starting a business, graduate school plans, earning scholarships, etc.). Be enthusiastic, engaging, and add your own natural conversational style while covering these key areas.${historyText}`;
-        } else {
-            // Check if we need to transition categories
-            if (session.questionsInCategory === 0 && session.totalQuestionsAsked > 0) {
-                const categoryNames = {
-                    'INTERMEDIATE_MILESTONES': 'intermediate milestones',
-                    'SECTORS': 'specific sectors and fields',
-                    'SKILLS': 'key skills to develop'
-                };
-                
-                const transitionText = categoryNames[status.category] || 'the next category';
-                specificPrompt = `You are transitioning to the ${status.category} category. Announce the transition by saying "Now let's explore your ${transitionText}" and then ask your first question in this category. The student just said: "${userInput}"${historyText}`;
-            } else {
-                specificPrompt = `You are in the ${status.category} category, asking question ${status.categoryProgress}. The student just responded: "${userInput}"
-                
-                Build on their response and ask a follow-up question that digs deeper into this category. Stay focused on ${status.category} only.
-                
-                Category context:
-                - MILESTONE_GOALS: Focus on big 5-10 year dreams and ambitions
-                - INTERMEDIATE_MILESTONES: Focus on 1-2 year stepping stones and achievements
-                - SECTORS: Focus on specific industries, fields, and work environments
-                - SKILLS: Focus on concrete capabilities and competencies to develop${historyText}`;
-            }
-        }
-
-        const messages = [
-            { role: 'system', content: CONVERSATION_SYSTEM_PROMPT },
-            { role: 'user', content: specificPrompt }
-        ];
-
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o',
-            messages: messages,
-            max_tokens: 150,
-            temperature: 0.3
-        });
-
-        const aiResponse = response.choices[0].message.content;
-        
-        // Store conversation
-        if (!isFirstQuestion) {
-            session.conversationHistory.push({ role: 'user', content: userInput });
-            session.categoryResponses[CATEGORIES[session.currentCategoryIndex]].push(userInput);
-        }
-        session.conversationHistory.push({ role: 'assistant', content: aiResponse });
-
-        return aiResponse;
-    } catch (error) {
-        console.error('Error getting conversation response:', error);
-        return `Question ${getConversationStatus(sessionId)?.totalProgress || '1/16'}: What interests you most about your future goals?`;
-    }
-}
-
-async function getDataExtractionResponse(sessionId, userInput) {
-    try {
-        const session = activeSessions.get(sessionId);
-        if (!session) return null;
-
-        const historyText = session.conversationHistory.length > 0 ? 
-            `\nFULL CONVERSATION CONTEXT:\n${session.conversationHistory.map(msg => `${msg.role === 'user' ? 'Student' : 'Counselor'}: ${msg.content}`).join('\n')}\n` : 
-            '\nCONVERSATION CONTEXT: [This is the first response]\n';
-
-        const currentCategory = CATEGORIES[session.currentCategoryIndex];
-        const categoryContext = `\nCURRENT INTERVIEW CONTEXT:\n- Category: ${currentCategory}\n- Question ${session.totalQuestionsAsked + 1}/16\n- Category Progress: ${session.questionsInCategory + 1}/4\n`;
-
-        const previousExtractions = session.extractedDataHistory.length > 0 ? 
-            `\nPREVIOUS EXTRACTIONS:\n${session.extractedDataHistory.slice(-3).map(extraction => 
-                `Q${extraction.question_number}: ${JSON.stringify(extraction.extracted_data)}`
-            ).join('\n')}\n` : 
-            '\nPREVIOUS EXTRACTIONS: [None yet]\n';
-
-        const analysisPrompt = `Analyze this student response in the context of the full conversation and extract relevant data.
-
-CURRENT RESPONSE TO ANALYZE: "${userInput}"
-${categoryContext}${historyText}${previousExtractions}
-
-Instructions:
-- Consider the full conversation context when making extractions
-- Look for patterns and themes across all responses
-- Be consistent with previous extractions while identifying new information
-- The student is currently in the ${currentCategory} category, but extract data for ALL categories if relevant`;
-
-        const messages = [
-            { role: 'system', content: DATA_EXTRACTION_SYSTEM_PROMPT },
-            { role: 'user', content: analysisPrompt }
-        ];
-
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o',
-            messages: messages,
-            max_tokens: 600,
-            temperature: 0.1
-        });
-
-        const aiResponse = response.choices[0].message.content;
-        
-        try {
-            const extractedData = JSON.parse(aiResponse);
-            return extractedData;
-        } catch (parseError) {
-            console.log('Data extraction AI response (non-JSON):', aiResponse);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error getting data extraction response:', error);
-        return null;
-    }
-}
-
-// ================================================================================================
-// HELPER FUNCTIONS - Cleaned up and focused on conversation management
-// ================================================================================================
-// Note: Data extraction and file saving functions moved to dataExtraction.js
+// Legacy functions removed - now purely conversation management
 
 // Start server
 app.listen(PORT, () => {
