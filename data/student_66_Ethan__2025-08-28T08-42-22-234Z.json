@@ -1,0 +1,250 @@
+{
+  "student_info": {
+    "id": 66,
+    "name": "Ethan ",
+    "age": "17",
+    "location": "Victoria",
+    "highschool": "St. Michaels University School",
+    "gpa": "3.0",
+    "sat_act": "1530 SAT",
+    "session_date": "2025-08-28T08:42:22.233Z",
+    "conversation_structure": "Unified Goal Identification System"
+  },
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "I really want to get into my dream top 10 university and want to start a SUPER BIG startup related to tech"
+    },
+    {
+      "role": "assistant",
+      "content": "It seems you're mainly interested in top_10_university_acceptance and startup_founding. What extracurriculars have you participated in to reach towards these goals?"
+    },
+    {
+      "role": "user",
+      "content": "Here are my extracurricular activities:\n\n1. **AMC Academy**\n   I founded a startup that has generated 75K in revenue in just under a year that specializes in AI and education\n\nPlease provide a very brief analysis of how these activities connect to my goals of top_10_university_acceptance and startup_founding, then complete the milestone phase."
+    },
+    {
+      "role": "assistant",
+      "content": "Your experience founding a startup that focuses on AI and education aligns strongly with your goals of top_10_university_acceptance and startup_founding. This demonstrates both entrepreneurial initiative and a focus on technology, which are key aspects of your identified milestone goals.\n\n<PHASE_COMPLETE>MILESTONE_PHASE</PHASE_COMPLETE>"
+    },
+    {
+      "role": "user",
+      "content": "BEGIN_INTERMEDIATE_PHASE"
+    },
+    {
+      "role": "assistant",
+      "content": "What academic short-term goals are you focusing on this year for your top 10 university application?"
+    },
+    {
+      "role": "user",
+      "content": "I really want to get a perfect 4.0 and achieve a 1530 SAT score"
+    },
+    {
+      "role": "assistant",
+      "content": "What leadership roles are you pursuing to complement your entrepreneurial experience? Do you have goals for where you want to be in a few months?"
+    },
+    {
+      "role": "user",
+      "content": "I really want to be head of math club at my school"
+    },
+    {
+      "role": "assistant",
+      "content": "What specific steps are you planning to take to enhance your technical skills for your startup in the coming months?"
+    },
+    {
+      "role": "user",
+      "content": "I want to improve in computer science such that I can code and have technical understanding to guide devleopers"
+    },
+    {
+      "role": "assistant",
+      "content": "What plans do you have for gaining research experience or developing a project that aligns with your university application goals?"
+    },
+    {
+      "role": "user",
+      "content": "I don't really like research and don't want to pursue it"
+    },
+    {
+      "role": "assistant",
+      "content": "What strategies are you using to prepare for your SAT to achieve your target score?"
+    },
+    {
+      "role": "user",
+      "content": "I am going to try and study every day for the next 10 weeks"
+    },
+    {
+      "role": "assistant",
+      "content": "<PHASE_COMPLETE>INTERMEDIATE_PHASE</PHASE_COMPLETE>"
+    },
+    {
+      "role": "user",
+      "content": "begin extraction"
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"milestone_goals\": [\n    {\"category_name\": \"top_10_university_acceptance\", \"ranking\": 1},\n    {\"category_name\": \"startup_founding\", \"ranking\": 2}\n  ],\n  \"intermediate_milestones\": [\n    {\"category_name\": \"academic_record_enhancement\", \"ranking\": 1},\n    {\"category_name\": \"standardized_test_achievement\", \"ranking\": 2},\n    {\"category_name\": \"leadership_position_development\", \"ranking\": 3},\n    {\"category_name\": \"technical_skills\", \"ranking\": 4}\n  ],\n  \"skills\": [\n    {\"category_name\": \"programming_languages\", \"ranking\": 1},\n    {\"category_name\": \"business_fundamentals\", \"ranking\": 2}\n  ],\n  \"sectors\": [\n    {\"category_name\": \"software_technology\", \"ranking\": 1},\n    {\"category_name\": \"artificial_intelligence\", \"ranking\": 2}\n  ]\n}\n\n<PHASE_COMPLETE>EXTRACTION_PHASE</PHASE_COMPLETE>"
+    },
+    {
+      "role": "user",
+      "content": "complete session"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! I've identified your key goals across all areas. This gives us a clear picture of your academic and career objectives.\n\n<SESSION_COMPLETE>GOAL_IDENTIFICATION_FINISHED</SESSION_COMPLETE>"
+    }
+  ],
+  "extracted_data": {
+    "milestone_goals": [
+      {
+        "category_name": "top_10_university_acceptance",
+        "ranking": 1
+      },
+      {
+        "category_name": "startup_founding",
+        "ranking": 2
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "category_name": "academic_record_enhancement",
+        "ranking": 1
+      },
+      {
+        "category_name": "standardized_test_achievement",
+        "ranking": 2
+      },
+      {
+        "category_name": "leadership_position_development",
+        "ranking": 3
+      },
+      {
+        "category_name": "technical_skills",
+        "ranking": 4
+      }
+    ],
+    "skills": [
+      {
+        "category_name": "programming_languages",
+        "ranking": 1
+      },
+      {
+        "category_name": "business_fundamentals",
+        "ranking": 2
+      }
+    ],
+    "sectors": [
+      {
+        "category_name": "software_technology",
+        "ranking": 1
+      },
+      {
+        "category_name": "artificial_intelligence",
+        "ranking": 2
+      }
+    ]
+  },
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 66,
+      "name": "Ethan ",
+      "email": "ethan.@student.temp",
+      "age": "17",
+      "location": "Victoria",
+      "highschool": "St. Michaels University School",
+      "gpa": 3,
+      "satscore": "1530 SAT",
+      "exploration_openness": "medium",
+      "created_at": "2025-08-28T08:39:57.083462",
+      "updated_at": "2025-08-28T08:39:57.083462"
+    },
+    "milestone_goals": [
+      {
+        "id": 26,
+        "student_id": 66,
+        "category_name": "top_10_university_acceptance",
+        "percentage": 1,
+        "updated_at": "2025-08-28T08:42:20.322275"
+      },
+      {
+        "id": 27,
+        "student_id": 66,
+        "category_name": "startup_founding",
+        "percentage": 2,
+        "updated_at": "2025-08-28T08:42:20.50794"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 50,
+        "student_id": 66,
+        "category_name": "academic_record_enhancement",
+        "percentage": 1,
+        "updated_at": "2025-08-28T08:42:20.627834"
+      },
+      {
+        "id": 51,
+        "student_id": 66,
+        "category_name": "standardized_test_achievement",
+        "percentage": 2,
+        "updated_at": "2025-08-28T08:42:20.767721"
+      },
+      {
+        "id": 52,
+        "student_id": 66,
+        "category_name": "leadership_position_development",
+        "percentage": 3,
+        "updated_at": "2025-08-28T08:42:20.875559"
+      },
+      {
+        "id": 53,
+        "student_id": 66,
+        "category_name": "technical_skills",
+        "percentage": 4,
+        "updated_at": "2025-08-28T08:42:20.98281"
+      }
+    ],
+    "skills": [
+      {
+        "id": 22,
+        "student_id": 66,
+        "category_name": "programming_languages",
+        "percentage": 1,
+        "updated_at": "2025-08-28T08:42:21.088326"
+      },
+      {
+        "id": 23,
+        "student_id": 66,
+        "category_name": "business_fundamentals",
+        "percentage": 2,
+        "updated_at": "2025-08-28T08:42:21.208722"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 14,
+        "student_id": 66,
+        "category_name": "software_technology",
+        "percentage": 1,
+        "updated_at": "2025-08-28T08:42:21.317023"
+      },
+      {
+        "id": 15,
+        "student_id": 66,
+        "category_name": "artificial_intelligence",
+        "percentage": 2,
+        "updated_at": "2025-08-28T08:42:21.430586"
+      }
+    ],
+    "extracurriculars": []
+  },
+  "summary": {
+    "total_goals_identified": 6,
+    "total_skills_identified": 2,
+    "total_sectors_identified": 2,
+    "conversation_length": 21,
+    "phase_completed": "completed"
+  }
+}

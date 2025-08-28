@@ -19,15 +19,16 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   
   // Flow state
-  const [currentStep, setCurrentStep] = useState('basic-info'); // basic-info, milestone-chat, intermediate-chat, summary
-  const [extracurriculars, setExtracurriculars] = useState([]);
+  const [currentStep, setCurrentStep] = useState('basic-info'); // basic-info, conversation, summary
   const [phase, setPhase] = useState('');
   const [summaryData, setSummaryData] = useState(null);
+  const [extractedData, setExtractedData] = useState(null);
+  const [extracurriculars, setExtracurriculars] = useState([]);
   
-  // Modal state
+  // Modal states for extracurricular collection
+  const [showYesNoButtons, setShowYesNoButtons] = useState(false);
   const [showECModal, setShowECModal] = useState(false);
   const [ecForm, setECForm] = useState({ title: '', description: '' });
-  const [showYesNoButtons, setShowYesNoButtons] = useState(false);
   const [showAddMoreModal, setShowAddMoreModal] = useState(false);
   const [lastAddedTitle, setLastAddedTitle] = useState('');
 
@@ -69,12 +70,12 @@ function App() {
       setSessionId(data.sessionId);
       setPhase(data.phase);
       setMessages([{
-        id: 1,
+        id: `counselor-${Date.now()}-init`,
         type: 'counselor',
         content: data.message,
         timestamp: new Date()
       }]);
-      setCurrentStep('milestone-chat');
+              setCurrentStep('conversation');
     } catch (error) {
       console.error('Error submitting basic info:', error);
       alert('Failed to submit information. Please try again.');
@@ -83,33 +84,30 @@ function App() {
     }
   };
 
-  // Send message in conversation with streaming
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    if (!currentMessage.trim() || !sessionId) return;
+  // Send message in conversation with streaming (updated for unified system)
+  const sendMessage = async (e, autoMessage = null) => {
+    if (e) e.preventDefault();
+    
+    const messageToSend = autoMessage || currentMessage.trim();
+    if (!messageToSend || !sessionId) return;
 
-    const userMessage = {
-      id: messages.length + 1,
-      type: 'user',
-      content: currentMessage.trim(),
-      timestamp: new Date()
-    };
-
-    const messageToSend = currentMessage.trim();
-    setMessages(prev => [...prev, userMessage]);
-    setCurrentMessage('');
+    // Only show user message if not an auto-message and not a system trigger
+    if (!autoMessage && messageToSend !== 'BEGIN_INTERMEDIATE_PHASE') {
+      const userMessage = {
+        id: `user-${Date.now()}-${Math.random()}`,
+        type: 'user',
+        content: messageToSend,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      setCurrentMessage('');
+    }
+    
     setIsLoading(true);
 
-    // Create a placeholder message for the AI response
-    const counselorMessageId = messages.length + 2;
-    const counselorMessage = {
-      id: counselorMessageId,
-      type: 'counselor',
-      content: '',
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, counselorMessage]);
+    // We'll create the counselor message only when we have actual content to display
+    let counselorMessageId = null;
+    let counselorMessageCreated = false;
 
     try {
       const response = await fetch('/api/send-message-stream', {
@@ -143,21 +141,61 @@ function App() {
               
               if (data.type === 'content') {
                 accumulatedContent += data.content;
-                // Update the message in real-time
-                const currentContent = accumulatedContent;
-                setMessages(prev => prev.map(msg => 
-                  msg.id === counselorMessageId 
-                    ? { ...msg, content: currentContent }
-                    : msg
-                ));
+                
+                // Filter out phase signals and JSON from display
+                let filteredContent = filterPhaseSignalsAndJSON(accumulatedContent);
+                
+                // Only create/update message if there's actual content to show (not just JSON fragments)
+                if (filteredContent && filteredContent.trim().length > 0 && 
+                    !filteredContent.match(/^\s*[\{\[\],\s]*$/)) {
+                  
+                  // Create the counselor message if we haven't already
+                  if (!counselorMessageCreated) {
+                    counselorMessageId = `counselor-${Date.now()}-${Math.random()}`;
+                    const counselorMessage = {
+                      id: counselorMessageId,
+                      type: 'counselor',
+                      content: filteredContent,
+                      timestamp: new Date()
+                    };
+                    setMessages(prev => [...prev, counselorMessage]);
+                    counselorMessageCreated = true;
+                  } else {
+                    // Update existing message
+                    setMessages(prev => prev.map(msg => 
+                      msg.id === counselorMessageId 
+                        ? { ...msg, content: filteredContent }
+                        : msg
+                    ));
+                  }
+                }
               } else if (data.type === 'complete') {
-                // Update phase and other data when complete
                 setPhase(data.phase);
                 
-                // Check if we should show Yes/No buttons for extracurriculars
-                if (data.phase === 'extracurricular_question') {
-                  setShowYesNoButtons(true);
+                // Handle completion based on whether we created a message
+                const filteredContent = filterPhaseSignalsAndJSON(accumulatedContent);
+                if (counselorMessageCreated) {
+                  // If we created a message, check if it should be removed or updated
+                  if (!filteredContent || filteredContent.trim().length === 0 || 
+                      filteredContent.match(/^\s*[\{\[\],\s]*$/)) {
+                    console.log('🗑️ Removing empty/JSON-only message:', counselorMessageId);
+                    setMessages(prev => prev.filter(msg => msg.id !== counselorMessageId));
+                  } else {
+                    // Final update with filtered content
+                    setMessages(prev => prev.map(msg => 
+                      msg.id === counselorMessageId 
+                        ? { ...msg, content: filteredContent }
+                        : msg
+                    ));
+                  }
                 }
+                // If no message was created, there's nothing to clean up
+                
+                // Check if this is an extracurricular question
+                checkForExtracurricularQuestion(accumulatedContent);
+                
+                // Handle phase changes and auto-progression
+                handlePhaseChange(accumulatedContent, data.phase);
               } else if (data.type === 'error') {
                 throw new Error(data.error);
               }
@@ -170,42 +208,170 @@ function App() {
       
     } catch (error) {
       console.error('Error sending streaming message:', error);
-      // Fallback to non-streaming if streaming fails
-      try {
-        const fallbackResponse = await fetch('/api/send-message-new', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sessionId,
-            message: messageToSend
-          })
-        });
-
-        const fallbackData = await fallbackResponse.json();
-        
-        if (fallbackData.error) {
-          alert('Error: ' + fallbackData.error);
-          return;
-        }
-
-        // Update the message with fallback response
-        setMessages(prev => prev.map(msg => 
-          msg.id === counselorMessageId 
-            ? { ...msg, content: fallbackData.message }
-            : msg
-        ));
-        setPhase(fallbackData.phase);
-        
-        // Check if we should show Yes/No buttons for extracurriculars
-        if (fallbackData.phase === 'extracurricular_question') {
-          setShowYesNoButtons(true);
-        }
-      } catch (fallbackError) {
-        console.error('Fallback also failed:', fallbackError);
-        alert('Failed to send message. Please try again.');
+      
+      // Only add error message if we haven't created a counselor message yet
+      if (!counselorMessageCreated) {
+        setMessages(prev => [...prev, {
+          id: `counselor-${Date.now()}-error`,
+          type: 'counselor',
+          content: 'Sorry, there was an error. Please try again.',
+          timestamp: new Date()
+        }]);
+      } else {
+        // If we created a message, remove it and add error message
+        setMessages(prev => prev.filter(msg => msg.id !== counselorMessageId));
+        setMessages(prev => [...prev, {
+          id: `counselor-${Date.now()}-error`,
+          type: 'counselor',
+          content: 'Sorry, there was an error. Please try again.',
+          timestamp: new Date()
+        }]);
       }
-    } finally {
-      setIsLoading(false);
+    }
+    
+    setIsLoading(false);
+  };
+
+  // Check if AI is asking about extracurriculars
+  const checkForExtracurricularQuestion = (content) => {
+    const lowerContent = content.toLowerCase();
+    
+    // Look for extracurricular-related questions (but not if we're already in EC collection mode)
+    if (!showECModal && !showAddMoreModal && !showYesNoButtons &&
+        (lowerContent.includes('extracurricular') || 
+        (lowerContent.includes('activities') && lowerContent.includes('goals')) ||
+        lowerContent.includes('what extracurriculars have you participated'))) {
+      console.log('🎯 Detected extracurricular question, showing Yes/No buttons');
+      setShowYesNoButtons(true);
+    }
+  };
+
+  // Filter out phase signals and JSON from display
+  const filterPhaseSignalsAndJSON = (content) => {
+    let filtered = content;
+    
+    // Remove phase completion signals
+    filtered = filtered.replace(/<PHASE_COMPLETE>.*?<\/PHASE_COMPLETE>/g, '');
+    filtered = filtered.replace(/<SESSION_COMPLETE>.*?<\/SESSION_COMPLETE>/g, '');
+    
+    // Remove JSON extraction data (comprehensive patterns)
+    filtered = filtered.replace(/\{\s*"milestone_goals"[\s\S]*?\}\s*/g, '');
+    filtered = filtered.replace(/\{\s*"intermediate_milestones"[\s\S]*?\}\s*/g, '');
+    filtered = filtered.replace(/\{\s*"skills"[\s\S]*?\}\s*/g, '');
+    filtered = filtered.replace(/\{\s*"sectors"[\s\S]*?\}\s*/g, '');
+    
+    // Remove any JSON structures (even partial ones)
+    filtered = filtered.replace(/\{[\s\S]*?"ranking":\s*\d+[\s\S]*?\}/g, '');
+    filtered = filtered.replace(/\{[\s\S]*?"category_name"[\s\S]*?\}/g, '');
+    filtered = filtered.replace(/\{[\s\S]*?\[[\s\S]*?\][\s\S]*?\}/g, '');
+    
+    // Remove standalone JSON arrays and objects
+    filtered = filtered.replace(/^\s*\{[\s\S]*?\}\s*$/gm, '');
+    filtered = filtered.replace(/^\s*\[[\s\S]*?\]\s*$/gm, '');
+    
+    // Remove lines that are just JSON fragments
+    filtered = filtered.replace(/^\s*[,\[\]{}]\s*$/gm, '');
+    filtered = filtered.replace(/^\s*"[^"]*":\s*\[[\s\S]*?\]\s*$/gm, '');
+    
+    // Remove partial JSON patterns that appear at the end
+    filtered = filtered.replace(/\],\s*"intermediate_milestones":\s*\[\s*\],\s*"skills":\s*\[\s*\],\s*"sectors":\s*\[[\s\S]*$/g, '');
+    filtered = filtered.replace(/\],\s*"intermediate_milestones":\s*\[[\s\S]*$/g, '');
+    filtered = filtered.replace(/\],\s*"skills":\s*\[[\s\S]*$/g, '');
+    filtered = filtered.replace(/\],\s*"sectors":\s*\[[\s\S]*$/g, '');
+    
+    // Remove trailing JSON fragments
+    filtered = filtered.replace(/\s*\]\s*,\s*"[^"]*"\s*:\s*\[[\s\S]*$/g, '');
+    filtered = filtered.replace(/\s*\]\s*,[\s\S]*$/g, '');
+    
+    return filtered.trim();
+  };
+
+  // Handle phase changes and auto-progression
+  const handlePhaseChange = (fullContent, newPhase) => {
+    console.log('🔄 Checking phase signals in:', fullContent.substring(fullContent.length - 200));
+    
+    if (fullContent.includes('<PHASE_COMPLETE>MILESTONE_PHASE</PHASE_COMPLETE>')) {
+      console.log('📍 Milestone phase completed, transitioning to intermediate goals...');
+      setPhase('intermediate_goals');
+      
+      // Always auto-continue after milestone phase completion
+      setTimeout(() => {
+        console.log('🚀 Auto-continuing to intermediate phase');
+        sendMessage(null, 'BEGIN_INTERMEDIATE_PHASE');
+      }, 1500);
+      
+    } else if (fullContent.includes('<PHASE_COMPLETE>INTERMEDIATE_PHASE</PHASE_COMPLETE>')) {
+      console.log('📍 Intermediate phase completed, starting extraction...');
+      setPhase('extraction');
+      
+      // Auto-trigger extraction phase
+      setTimeout(() => {
+        sendMessage(null, 'begin extraction');
+      }, 1500);
+      
+    } else if (fullContent.includes('<PHASE_COMPLETE>EXTRACTION_PHASE</PHASE_COMPLETE>')) {
+      console.log('📍 Extraction phase completed, processing data...');
+      setPhase('completion');
+      
+      // Extract and save JSON data
+      const jsonMatch = fullContent.match(/\{[\s\S]*?"sectors"[\s\S]*?\}/);
+      if (jsonMatch) {
+        try {
+          const extracted = JSON.parse(jsonMatch[0]);
+          setExtractedData(extracted);
+          console.log('📊 Data extracted:', extracted);
+        } catch (error) {
+          console.error('Error parsing extracted data:', error);
+        }
+      }
+      
+      // Auto-complete session
+      setTimeout(() => {
+        sendMessage(null, 'complete session');
+      }, 1500);
+      
+    } else if (fullContent.includes('<SESSION_COMPLETE>GOAL_IDENTIFICATION_FINISHED</SESSION_COMPLETE>')) {
+      console.log('✅ Session completed successfully');
+      setPhase('completed');
+      
+      // Auto-generate summary
+      setTimeout(() => {
+        extractData();
+      }, 2000);
+    }
+  };
+
+  // Progress indicator functions
+  const getPhaseDisplayName = (currentPhase) => {
+    switch(currentPhase) {
+      case 'milestone_identification':
+        return 'Identifying Long-term Goals';
+      case 'intermediate_goals':
+        return 'Exploring Intermediate Steps';
+      case 'extraction':
+        return 'Analyzing Your Goals';
+      case 'completion':
+        return 'Finalizing Assessment';
+      case 'completed':
+        return 'Assessment Complete';
+      default:
+        return 'Goal Identification';
+    }
+  };
+
+  const getPhaseProgress = (currentPhase) => {
+    switch(currentPhase) {
+      case 'milestone_identification':
+        return 25;
+      case 'intermediate_goals':
+        return 50;
+      case 'extraction':
+        return 75;
+      case 'completion':
+      case 'completed':
+        return 100;
+      default:
+        return 0;
     }
   };
 
@@ -215,36 +381,30 @@ function App() {
     setShowYesNoButtons(false);
     
     try {
-      const apiResponse = await fetch('/api/extracurricular-response', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          response
-        })
-      });
-
-      const data = await apiResponse.json();
-      
-      if (data.error) {
-        alert('Error: ' + data.error);
-        return;
-      }
-
-      // Add the response message
-      const responseMessage = {
-        id: messages.length + 1,
-        type: 'counselor',
-        content: data.message,
+      // Add user response to conversation
+      const userMessage = {
+        id: `user-${Date.now()}-ec-response`,
+        type: 'user',
+        content: response === 'yes' ? 'Yes, I\'d like to share my extracurriculars' : 'No, I\'d prefer to continue without sharing extracurriculars',
         timestamp: new Date()
       };
+      setMessages(prev => [...prev, userMessage]);
 
-      setMessages(prev => [...prev, responseMessage]);
-      setPhase(data.phase);
-      
-      // If they said yes, show the modal for adding ECs
       if (response === 'yes') {
+        // Show extracurricular collection modal
         setShowECModal(true);
+        
+        // Add counselor response
+        const counselorMessage = {
+          id: `counselor-${Date.now()}-ec-prompt`,
+          type: 'counselor',
+          content: 'Perfect! Please add your extracurricular activities one at a time. For each activity, provide a title and description.',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, counselorMessage]);
+      } else {
+        // Continue with conversation - send the "no" response to unified system
+        sendMessage(null, 'No, I\'d prefer to continue without sharing extracurriculars for now');
       }
       
     } catch (error) {
@@ -263,28 +423,13 @@ function App() {
     }
 
     setIsLoading(true);
+    
     try {
-      const response = await fetch('/api/submit-extracurricular', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          title: ecForm.title.trim(),
-          description: ecForm.description.trim()
-        })
-      });
-
-      const data = await response.json();
-      
-      if (data.error) {
-        alert('Error: ' + data.error);
-        return;
-      }
-
       // Add to local state
       setExtracurriculars(prev => [...prev, {
         title: ecForm.title.trim(),
-        description: ecForm.description.trim()
+        description: ecForm.description.trim(),
+        timestamp: new Date().toISOString()
       }]);
 
       // Store the title before resetting form
@@ -316,33 +461,29 @@ function App() {
     }
   };
 
-  // Finish adding extracurriculars and move to intermediate goals
+  // Finish adding extracurriculars and continue conversation
   const finishExtracurriculars = async () => {
     setIsLoading(true);
+    
     try {
-      const response = await fetch('/api/finish-extracurriculars', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId })
-      });
-
-      const data = await response.json();
+      // Create well-formatted summary of extracurriculars
+      const formattedECs = extracurriculars.map((ec, index) => 
+        `${index + 1}. **${ec.title}**\n   ${ec.description}`
+      ).join('\n\n');
       
-      if (data.error) {
-        alert('Error: ' + data.error);
-        return;
-      }
-
-      // Add the transition message
-      const transitionMessage = {
-        id: messages.length + 1,
-        type: 'counselor',
-        content: data.message,
+      // Add nicely formatted summary message to conversation
+      const summaryMessage = {
+        id: `user-${Date.now()}-ec-summary`,
+        type: 'user',
+        content: `Here are my extracurricular activities:\n\n${formattedECs}`,
         timestamp: new Date()
       };
+      setMessages(prev => [...prev, summaryMessage]);
 
-      setMessages(prev => [...prev, transitionMessage]);
-      setPhase(data.phase);
+      // Send the extracurricular info to the unified system with special instruction
+      const ecPrompt = `Here are my extracurricular activities:\n\n${formattedECs}\n\nPlease provide a very brief analysis of how these activities connect to my goals of top_10_university_acceptance and startup_founding, then complete the milestone phase.`;
+      
+      sendMessage(null, ecPrompt);
       
     } catch (error) {
       console.error('Error finishing extracurriculars:', error);
@@ -351,6 +492,8 @@ function App() {
       setIsLoading(false);
     }
   };
+
+
 
   // Handle form input changes
   const handleInputChange = (field, value) => {
@@ -414,6 +557,9 @@ function App() {
     setExtracurriculars([]);
     setPhase('');
     setSummaryData(null);
+    setShowYesNoButtons(false);
+    setShowECModal(false);
+    setShowAddMoreModal(false);
   };
 
   // Format milestone goals for display
@@ -539,65 +685,9 @@ function App() {
           </div>
           
           <div className="summary-content">
-            <div className="summary-section">
-              <h3>Identified Goals</h3>
-              <div className="goals-display">
-                {(summaryData.identified_milestones || []).map((goal, index) => (
-                  <div key={index} className="goal-chip">
-                    {formatGoalName(goal)}
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="summary-section">
-              <h3>Extracurricular Activities</h3>
-              <div className="activities-list">
-                {(() => {
-                  // Combine and deduplicate extracurriculars
-                  const sessionECs = summaryData.extracurriculars || [];
-                  const dbECs = summaryData.database_extracurriculars || [];
-                  
-                  // Create a map to deduplicate by title
-                  const ecMap = new Map();
-                  
-                  // Add session ECs first (they're more recent)
-                  sessionECs.forEach((ec, index) => {
-                    ecMap.set(ec.title.toLowerCase(), {
-                      ...ec,
-                      source: 'Session',
-                      key: `session-${index}`
-                    });
-                  });
-                  
-                  // Add database ECs only if not already present
-                  dbECs.forEach((ec, index) => {
-                    const key = ec.title.toLowerCase();
-                    if (!ecMap.has(key)) {
-                      ecMap.set(key, {
-                        ...ec,
-                        source: 'Database',
-                        key: `db-${index}`
-                      });
-                    }
-                  });
-                  
-                  const uniqueECs = Array.from(ecMap.values());
-                  
-                  if (uniqueECs.length === 0) {
-                    return <p className="no-data">No extracurricular activities recorded</p>;
-                  }
-                  
-                  return uniqueECs.map((ec) => (
-                    <div key={ec.key} className="activity-item">
-                      <h4>{ec.title}</h4>
-                      <p>{ec.description}</p>
-                      <span className="activity-source">{ec.source}</span>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </div>
+
+
 
             <div className="summary-section">
               <h3>Milestone Goals Analysis</h3>
@@ -676,22 +766,7 @@ function App() {
                 <span className="stat-value">{summaryData.conversation_length || 0}</span>
                 <span className="stat-label">Conversation Messages</span>
               </div>
-              <div className="stat-item">
-                <span className="stat-value">
-                  {(() => {
-                    // Calculate deduplicated EC count
-                    const sessionECs = summaryData.extracurriculars || [];
-                    const dbECs = summaryData.database_extracurriculars || [];
-                    const ecTitles = new Set();
-                    
-                    sessionECs.forEach(ec => ecTitles.add(ec.title.toLowerCase()));
-                    dbECs.forEach(ec => ecTitles.add(ec.title.toLowerCase()));
-                    
-                    return ecTitles.size;
-                  })()}
-                </span>
-                <span className="stat-label">Activities Shared</span>
-              </div>
+
               <div className="stat-item">
                 <span className="stat-value">
                   {(summaryData.milestone_goals?.length || 0) + (summaryData.intermediate_milestones?.length || 0)}
@@ -786,9 +861,16 @@ function App() {
                 <span>{studentData.age} years old</span>
                 <span>{studentData.location}</span>
               </div>
-              <div className="phase-indicator">
-                {phase === 'milestone_identification' && 'Goal Identification'}
-                {phase === 'intermediate_goals' && 'Strategic Planning'}
+              <div className="phase-container">
+                <div className="phase-indicator">
+                  {getPhaseDisplayName(phase)}
+                </div>
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${getPhaseProgress(phase)}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
@@ -846,12 +928,12 @@ function App() {
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
                   placeholder="Type your response..."
-                  disabled={isLoading}
+                  disabled={isLoading || phase === 'completed'}
                   className="chat-input"
                 />
                 <button 
                   type="submit" 
-                  disabled={isLoading || !currentMessage.trim()}
+                  disabled={isLoading || !currentMessage.trim() || phase === 'completed'}
                   className="send-button"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -902,7 +984,7 @@ function App() {
             )}
           </div>
         </div>
-        
+
         {/* Extracurricular Modal */}
         {showECModal && (
           <div className="modal-overlay" onClick={() => setShowECModal(false)}>
@@ -1005,6 +1087,7 @@ function App() {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
