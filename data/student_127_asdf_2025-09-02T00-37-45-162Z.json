@@ -1,0 +1,126 @@
+{
+  "student_info": {
+    "id": 127,
+    "name": "asdf",
+    "age": "22",
+    "location": "asdf",
+    "highschool": "",
+    "gpa": "",
+    "sat_act": "asdf",
+    "session_date": "2025-09-02T00:37:45.162Z",
+    "conversation_structure": "Unified Goal Identification System"
+  },
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "I want to get into a top 10 university and break into finance and medicine"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_YqMoNL2uifW1DwErfV3W0AqS",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"milestone_goals\", \"category_name\": \"top_10_university_acceptance\", \"ranking\": 1}"
+          }
+        },
+        {
+          "id": "call_8hN6sBN3hvXEE1GGDHPm7IZD",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"sectors\", \"category_name\": \"investment_banking_field\", \"ranking\": 1}"
+          }
+        },
+        {
+          "id": "call_6MQ7McCJaIFEztQUf7U7BEXh",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"sectors\", \"category_name\": \"medicine_clinical\", \"ranking\": 2}"
+          }
+        }
+      ]
+    },
+    {
+      "tool_call_id": "call_YqMoNL2uifW1DwErfV3W0AqS",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored milestone_goals: top_10_university_acceptance (ranking: 1)\"}"
+    },
+    {
+      "tool_call_id": "call_8hN6sBN3hvXEE1GGDHPm7IZD",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored sectors: investment_banking_field (ranking: 1)\"}"
+    },
+    {
+      "tool_call_id": "call_6MQ7McCJaIFEztQUf7U7BEXh",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored sectors: medicine_clinical (ranking: 2)\"}"
+    },
+    {
+      "role": "user",
+      "content": "Thanks for using the tools! Now please respond to the user conversationally without using any tools."
+    },
+    {
+      "role": "assistant",
+      "content": "It seems you're mainly interested in top_10_university_acceptance and exploring both the investment banking and medicine fields. What extracurriculars have you participated in to reach towards these goals?"
+    }
+  ],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 127,
+      "name": "asdf",
+      "email": "asdf@student.temp",
+      "age": "22",
+      "location": "asdf",
+      "highschool": null,
+      "gpa": null,
+      "satscore": "asdf",
+      "exploration_openness": "medium",
+      "created_at": "2025-09-02T00:33:54.481288",
+      "updated_at": "2025-09-02T00:33:54.481288"
+    },
+    "milestone_goals": [
+      {
+        "id": 39,
+        "student_id": 127,
+        "category_name": "top_10_university_acceptance",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:34:08.652094"
+      }
+    ],
+    "intermediate_milestones": [],
+    "skills": [],
+    "sectors": [
+      {
+        "id": 24,
+        "student_id": 127,
+        "category_name": "investment_banking_field",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:34:08.847736"
+      },
+      {
+        "id": 25,
+        "student_id": 127,
+        "category_name": "medicine_clinical",
+        "percentage": 2,
+        "updated_at": "2025-09-02T00:34:08.973041"
+      }
+    ],
+    "extracurriculars": []
+  },
+  "summary": {
+    "total_goals_identified": 1,
+    "total_skills_identified": 0,
+    "total_sectors_identified": 2,
+    "conversation_length": 8,
+    "phase_completed": "milestone_identification"
+  }
+}

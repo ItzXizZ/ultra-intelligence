@@ -1,0 +1,110 @@
+{
+  "student_info": {
+    "id": 119,
+    "name": "asdf",
+    "age": "22",
+    "location": "asdf",
+    "highschool": "",
+    "gpa": "",
+    "sat_act": "asdf",
+    "session_date": "2025-09-01T23:36:35.661Z",
+    "conversation_structure": "Unified Goal Identification System"
+  },
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "Hi I really want to get into a top 10 university, that is my only milestone goal"
+    },
+    {
+      "role": "assistant",
+      "content": "It seems you're mainly interested in top_10_university_acceptance. What extracurriculars have you participated in to reach towards this goal?"
+    },
+    {
+      "role": "user",
+      "content": "Here are my extracurricular activities:\n\n1. **AMC Academy**\n   Founded a 6 figure education startup\n\nPlease provide a very brief analysis of how these activities connect to my goals of top_10_university_acceptance and startup_founding, then complete the milestone phase."
+    },
+    {
+      "role": "assistant",
+      "content": "Your involvement in founding a successful education startup demonstrates leadership, innovation, and entrepreneurial skills, which align well with your goal of top_10_university_acceptance. This experience showcases your ability to manage and grow a venture, making your application stand out.\n\n<PHASE_COMPLETE>MILESTONE_PHASE</PHASE_COMPLETE>"
+    },
+    {
+      "role": "user",
+      "content": "BEGIN_INTERMEDIATE_PHASE"
+    },
+    {
+      "role": "assistant",
+      "content": "What academic short-term goals are you focusing on this year to enhance your application for a top 10 university?"
+    },
+    {
+      "role": "user",
+      "content": "My intermidiate goal is to do good on the SAT"
+    },
+    {
+      "role": "assistant",
+      "content": "What specific goals do you have for preparing and achieving a high score on the SAT?"
+    },
+    {
+      "role": "user",
+      "content": "I think we're ready to end the conversation"
+    },
+    {
+      "role": "assistant",
+      "content": "<PHASE_COMPLETE>INTERMEDIATE_PHASE</PHASE_COMPLETE>"
+    },
+    {
+      "role": "user",
+      "content": "begin extraction"
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"milestone_goals\": [\n    {\"category_name\": \"top_10_university_acceptance\", \"ranking\": 1}\n  ],\n  \"intermediate_milestones\": [\n    {\"category_name\": \"standardized_test_achievement\", \"ranking\": 1}\n  ],\n  \"skills\": [\n    {\"category_name\": \"leadership_management\", \"ranking\": 1},\n    {\"category_name\": \"business_fundamentals\", \"ranking\": 2}\n  ],\n  \"sectors\": [\n    {\"category_name\": \"entrepreneurship_business\", \"ranking\": 1}\n  ]\n}"
+    },
+    {
+      "role": "user",
+      "content": "hi?"
+    },
+    {
+      "role": "assistant",
+      "content": "<PHASE_COMPLETE>EXTRACTION_PHASE</PHASE_COMPLETE>"
+    },
+    {
+      "role": "user",
+      "content": "complete session"
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! I've identified your key goals across all areas. This gives us a clear picture of your academic and career objectives.\n\n<SESSION_COMPLETE>GOAL_IDENTIFICATION_FINISHED</SESSION_COMPLETE>"
+    }
+  ],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 119,
+      "name": "asdf",
+      "email": "asdf@student.temp",
+      "age": "22",
+      "location": "asdf",
+      "highschool": null,
+      "gpa": null,
+      "satscore": "asdf",
+      "exploration_openness": "medium",
+      "created_at": "2025-09-01T23:33:31.115862",
+      "updated_at": "2025-09-01T23:33:31.115862"
+    },
+    "milestone_goals": [],
+    "intermediate_milestones": [],
+    "skills": [],
+    "sectors": [],
+    "extracurriculars": []
+  },
+  "summary": {
+    "total_goals_identified": 0,
+    "total_skills_identified": 0,
+    "total_sectors_identified": 0,
+    "conversation_length": 17,
+    "phase_completed": "completed"
+  }
+}

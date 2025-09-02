@@ -1,0 +1,342 @@
+{
+  "student_info": {
+    "id": 126,
+    "name": "asdf",
+    "age": "22",
+    "location": "asdf",
+    "highschool": "",
+    "gpa": "",
+    "sat_act": "asdf",
+    "session_date": "2025-09-02T00:29:55.019Z",
+    "conversation_structure": "Unified Goal Identification System"
+  },
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi! If you could fast forward to 2-5 years from now, what long term goal / goals do you have? This could be anything from getting accepted into a dream university, launching your own startup, or becoming a successful practitioner in a field you're passionate about."
+    },
+    {
+      "role": "user",
+      "content": "I want to get into at op 10 university"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_G95xOnhpVNq7E5eIDHoDUJYr",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"milestone_goals\", \"category_name\": \"top_10_university_acceptance\", \"ranking\": 1}"
+          }
+        }
+      ]
+    },
+    {
+      "tool_call_id": "call_G95xOnhpVNq7E5eIDHoDUJYr",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored milestone_goals: top_10_university_acceptance (ranking: 1)\"}"
+    },
+    {
+      "role": "user",
+      "content": "Thanks for using the tools! Now please respond to the user conversationally without using any tools."
+    },
+    {
+      "role": "assistant",
+      "content": "It seems you're mainly interested in top_10_university_acceptance. What extracurriculars have you participated in to reach towards this goal?"
+    },
+    {
+      "role": "user",
+      "content": "Here are my extracurricular activities:\n\n1. **AMC Academy**\n   Founded a 6 figure education company\n\nPlease provide a very brief analysis of how these activities connect to my goals of top_10_university_acceptance and startup_founding, then complete the milestone phase."
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_JiNKFmSOvHXorMXB3Ob8VPY0",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"milestone_goals\", \"category_name\": \"startup_founding\", \"ranking\": 2}"
+          }
+        },
+        {
+          "id": "call_IXaKkulSUjZZef41lO8S9xxQ",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"intermediate_milestones\", \"category_name\": \"club_founding\", \"ranking\": 1}"
+          }
+        },
+        {
+          "id": "call_fmGCyxlfRLbNulHeBSwawMDn",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"skills\", \"category_name\": \"leadership_management\", \"ranking\": 1}"
+          }
+        },
+        {
+          "id": "call_raI7Rl5p5HVrv7KFQ1mMVwRS",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"skills\", \"category_name\": \"business_fundamentals\", \"ranking\": 2}"
+          }
+        },
+        {
+          "id": "call_aAHtq98tReCFnhVr2iqTv6bd",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\": \"sectors\", \"category_name\": \"entrepreneurship_business\", \"ranking\": 1}"
+          }
+        },
+        {
+          "id": "call_mRQ3nNmDObKOk65Dm3SoXQmU",
+          "type": "function",
+          "function": {
+            "name": "update_todo",
+            "arguments": "{\"todoId\": \"milestone_phase\", \"updates\": {\"status\": \"completed\"}}"
+          }
+        }
+      ]
+    },
+    {
+      "tool_call_id": "call_JiNKFmSOvHXorMXB3Ob8VPY0",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored milestone_goals: startup_founding (ranking: 2)\"}"
+    },
+    {
+      "tool_call_id": "call_IXaKkulSUjZZef41lO8S9xxQ",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored intermediate_milestones: club_founding (ranking: 1)\"}"
+    },
+    {
+      "tool_call_id": "call_fmGCyxlfRLbNulHeBSwawMDn",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored skills: leadership_management (ranking: 1)\"}"
+    },
+    {
+      "tool_call_id": "call_raI7Rl5p5HVrv7KFQ1mMVwRS",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored skills: business_fundamentals (ranking: 2)\"}"
+    },
+    {
+      "tool_call_id": "call_aAHtq98tReCFnhVr2iqTv6bd",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored sectors: entrepreneurship_business (ranking: 1)\"}"
+    },
+    {
+      "tool_call_id": "call_mRQ3nNmDObKOk65Dm3SoXQmU",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Todo milestone_phase updated to completed\",\"todos\":[{\"id\":\"milestone_phase\",\"content\":\"Identify milestone goals and analyze extracurriculars\",\"status\":\"completed\"},{\"id\":\"intermediate_phase\",\"content\":\"Identify intermediate goals and next steps\",\"status\":\"in_progress\"},{\"id\":\"end_phase\",\"content\":\"Extract and rank all goals, provide final analysis\",\"status\":\"pending\"}],\"currentTodo\":{\"id\":\"intermediate_phase\",\"content\":\"Identify intermediate goals and next steps\",\"status\":\"in_progress\"}}"
+    },
+    {
+      "role": "user",
+      "content": "Thanks for using the tools! Now please respond to the user conversationally without using any tools."
+    },
+    {
+      "role": "assistant",
+      "content": "Your experience with founding a successful education company demonstrates strong leadership and business skills, which align well with your goals of top_10_university_acceptance and startup_founding. Now, let's focus on identifying some intermediate goals. What academic short-term goals are you focusing on this year to enhance your university application?"
+    },
+    {
+      "role": "user",
+      "content": "I really awnt to ace the SAT"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_VsPNX7B90HZdx8t2k7spsiUn",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\":\"intermediate_milestones\",\"category_name\":\"standardized_test_achievement\",\"ranking\":1}"
+          }
+        }
+      ]
+    },
+    {
+      "tool_call_id": "call_VsPNX7B90HZdx8t2k7spsiUn",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored intermediate_milestones: standardized_test_achievement (ranking: 1)\"}"
+    },
+    {
+      "role": "user",
+      "content": "Thanks for using the tools! Now please respond to the user conversationally without using any tools."
+    },
+    {
+      "role": "assistant",
+      "content": "Achieving a high score on the SAT is a great intermediate goal that will significantly strengthen your application to a top 10 university. Are there any other academic or extracurricular goals you're working on to support your application?"
+    },
+    {
+      "role": "user",
+      "content": "no, there aren't I just want a leadership position in my math club"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_EXwIS6tGsHtSdDJG1cpzP2f1",
+          "type": "function",
+          "function": {
+            "name": "store_goal_data",
+            "arguments": "{\"category_type\":\"intermediate_milestones\",\"category_name\":\"leadership_position_development\",\"ranking\":2}"
+          }
+        }
+      ]
+    },
+    {
+      "tool_call_id": "call_EXwIS6tGsHtSdDJG1cpzP2f1",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Stored intermediate_milestones: leadership_position_development (ranking: 2)\"}"
+    },
+    {
+      "role": "user",
+      "content": "Thanks for using the tools! Now please respond to the user conversationally without using any tools."
+    },
+    {
+      "role": "assistant",
+      "content": "Pursuing a leadership position in your math club is an excellent way to enhance your leadership skills and bolster your university application. Are there any specific steps you're planning to take to secure this position?"
+    },
+    {
+      "role": "user",
+      "content": "no I don't have any steps right nowq"
+    },
+    {
+      "role": "assistant",
+      "content": "That's okay! Identifying the goal is the first step. As you continue to work towards it, you might find opportunities to demonstrate your leadership abilities within the club. Let's move on to the next phase. Are there any other intermediate goals you'd like to discuss, or should we proceed to the final review and completion phase?"
+    },
+    {
+      "role": "user",
+      "content": "no let's proceed"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_3NQS8MdHesuC15yadlPQP35G",
+          "type": "function",
+          "function": {
+            "name": "update_todo",
+            "arguments": "{\"todoId\":\"intermediate_phase\",\"updates\":{\"status\":\"completed\"}}"
+          }
+        }
+      ]
+    },
+    {
+      "tool_call_id": "call_3NQS8MdHesuC15yadlPQP35G",
+      "role": "tool",
+      "content": "{\"success\":true,\"message\":\"Todo intermediate_phase updated to completed\",\"todos\":[{\"id\":\"milestone_phase\",\"content\":\"Identify milestone goals and analyze extracurriculars\",\"status\":\"completed\"},{\"id\":\"intermediate_phase\",\"content\":\"Identify intermediate goals and next steps\",\"status\":\"completed\"},{\"id\":\"end_phase\",\"content\":\"Extract and rank all goals, provide final analysis\",\"status\":\"in_progress\"}],\"currentTodo\":{\"id\":\"end_phase\",\"content\":\"Extract and rank all goals, provide final analysis\",\"status\":\"in_progress\"}}"
+    },
+    {
+      "role": "user",
+      "content": "Thanks for using the tools! Now please respond to the user conversationally without using any tools."
+    },
+    {
+      "role": "assistant",
+      "content": "Perfect! We've now identified your key goals across all areas, including your long-term ambition of attending a top 10 university and founding a startup, as well as your intermediate goals like acing the SAT and pursuing a leadership role in your math club. This gives us a clear picture of your academic and career objectives. If there's anything else you'd like to explore or discuss, feel free to let me know!"
+    },
+    {
+      "role": "user",
+      "content": "Thank you!"
+    },
+    {
+      "role": "assistant",
+      "content": "You're welcome! If you have any more questions or need further assistance in the future, feel free to reach out. Good luck with all your goals!"
+    }
+  ],
+  "comprehensive_database_data": {
+    "student_info": {
+      "id": 126,
+      "name": "asdf",
+      "email": "asdf@student.temp",
+      "age": "22",
+      "location": "asdf",
+      "highschool": null,
+      "gpa": null,
+      "satscore": "asdf",
+      "exploration_openness": "medium",
+      "created_at": "2025-09-02T00:27:55.932456",
+      "updated_at": "2025-09-02T00:27:55.932456"
+    },
+    "milestone_goals": [
+      {
+        "id": 37,
+        "student_id": 126,
+        "category_name": "top_10_university_acceptance",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:28:03.147195"
+      },
+      {
+        "id": 38,
+        "student_id": 126,
+        "category_name": "startup_founding",
+        "percentage": 2,
+        "updated_at": "2025-09-02T00:28:26.048075"
+      }
+    ],
+    "intermediate_milestones": [
+      {
+        "id": 69,
+        "student_id": 126,
+        "category_name": "club_founding",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:28:26.257135"
+      },
+      {
+        "id": 70,
+        "student_id": 126,
+        "category_name": "standardized_test_achievement",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:28:54.532531"
+      },
+      {
+        "id": 71,
+        "student_id": 126,
+        "category_name": "leadership_position_development",
+        "percentage": 2,
+        "updated_at": "2025-09-02T00:29:12.922103"
+      }
+    ],
+    "skills": [
+      {
+        "id": 31,
+        "student_id": 126,
+        "category_name": "leadership_management",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:28:26.418938"
+      },
+      {
+        "id": 32,
+        "student_id": 126,
+        "category_name": "business_fundamentals",
+        "percentage": 2,
+        "updated_at": "2025-09-02T00:28:26.579575"
+      }
+    ],
+    "sectors": [
+      {
+        "id": 21,
+        "student_id": 126,
+        "category_name": "entrepreneurship_business",
+        "percentage": 1,
+        "updated_at": "2025-09-02T00:28:26.697665"
+      }
+    ],
+    "extracurriculars": []
+  },
+  "summary": {
+    "total_goals_identified": 5,
+    "total_skills_identified": 2,
+    "total_sectors_identified": 1,
+    "conversation_length": 35,
+    "phase_completed": "milestone_identification"
+  }
+}

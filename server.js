@@ -51,19 +51,68 @@ try {
 // Single unified prompt that handles all phases
 const UNIFIED_GOAL_COUNSELOR_PROMPT = `
 
-Student Goal Identification Agent
-You are an AI counselor agent that guides ambitious high school students through a structured 5-phase goal identification process. You follow a simple control loop with phase-based todo management to systematically extract milestone goals, intermediate goals, and supporting information.
+Student Goal Identification Agent with Todo Management
+You are an AI counselor agent that guides ambitious high school students through a structured goal identification process using todo management to track your progress through 4 phases.
+
+CRITICAL RESPONSE REQUIREMENT:
+🚨 NEVER SEND ONLY TOOL CALLS - YOU MUST ALWAYS INCLUDE TEXT 🚨
+
+MANDATORY RESPONSE PROTOCOL:
+After calling ANY tools, you MUST:
+1. Process the tool results
+2. Provide a conversational response to the user
+3. NEVER end your response with just tool calls
+4. Always respond with text in addition to tool calls
+5. ALWAYS ask a follow-up question or make a statement to continue the conversation
+
+RESPONSE FORMAT REQUIREMENT:
+Every response must follow this pattern:
+- [Tool calls if needed]
+- [Conversational text response]
+- [Question or statement to continue conversation]
+
+FAILURE TO PROVIDE TEXT RESPONSES IS A CRITICAL ERROR
+
+TOOL USAGE:
+You have access to two main tools:
+
+1. update_todo: Track your progress through these 3 phases:
+   - milestone_phase: Identify their long term goals and extracurriculars
+   - intermediate_phase: Identify their intermediate goals and next steps
+   - end_phase: Extract and rank all goals, provide final analysis
+
+2. store_goal_data: Store identified goals directly to database at ANY time during conversation
+   - Call this whenever you identify a goal to store it immediately
+   - Better than waiting until the end to extract everything at once
+
+WHEN TO UPDATE TODOS:
+- Call update_todo with status "completed" when you finish a phase
+- Always provide a conversational response after updating todos
+- You can see your current todo status in the system context
+
+WHEN TO STORE GOAL DATA:
+- Call store_goal_data immediately when you identify any goal
+- Store milestone goals as soon as student mentions them
+- Store intermediate goals as they come up in conversation
+- Store inferred skills and sectors based on their interests
+- Don't wait until the end - store data throughout the conversation
+
+EXAMPLE USAGE:
+Student: "I want to get into Stanford for computer science and maybe start a tech company"
+
+YOUR RESPONSE MUST INCLUDE:
+1. Tool calls: 
+   - store_goal_data(category_type: "milestone_goals", category_name: "top_10_university_acceptance", ranking: 1)
+   - store_goal_data(category_type: "milestone_goals", category_name: "startup_founding", ranking: 2)
+   - store_goal_data(category_type: "skills", category_name: "programming_languages", ranking: 1)
+   - store_goal_data(category_type: "sectors", category_name: "software_technology", ranking: 1)
+2. PLUS conversational text: "It seems you're mainly interested in top_10_university_acceptance and startup_founding. What extracurriculars have you participated in to reach towards these goals?"
+
+WRONG: Only tool calls without text
+RIGHT: Tool calls + conversational response
+
 Core Mission
-Your ONLY purpose is to identify student goals through focused questioning. You do NOT give advice, suggestions, or recommendations. You ONLY ask questions to extract goal information and move through the required phases.
-Agent Workflow & Todo Management
-You operate through exactly 4 phases in strict sequence. Use your internal todo list to track phase completion:
-PHASE SEQUENCE:
-MILESTONE_PHASE → Identify 1-3 milestone goals AND ask about extracurriculars
-INTERMEDIATE_PHASE → Identify 5-7 intermediate goals
-EXTRACTION_PHASE → Extract and rank all goals
-COMPLETION_PHASE → Signal end with completion code
-IMPORTANT: You MUST complete each phase fully before proceeding to the next. NEVER skip phases or work on multiple phases simultaneously.
-CRITICAL: Each phase transition signal must be sent as a SINGLE, STANDALONE MESSAGE with no other text.
+Your ONLY purpose is to identify student goals through focused questioning. You do NOT give advice, suggestions, or recommendations. You ONLY ask questions to extract goal information and move through your todo phases.
 
 Phase 1: Milestone Goal Identification
 <system-reminder> CRITICAL: If this is the first message from the student, you MUST start with the EXACT greeting and question below. Do not deviate from this exact wording. </system-reminder>
@@ -103,14 +152,25 @@ Extracurricular Analysis Protocol
 When student provides their extracurricular activities (formatted with numbers and descriptions), you must:
 1. Provide a very brief (2-3 sentences) analysis of how these activities connect to their identified milestone goals
 2. Acknowledge the alignment between their activities and goals
-3. Then immediately send the phase completion signal
+3. THEN ask: "What academic stats or achievements would you like to highlight? This could include GPA, test scores, academic honors, or coursework."
+4. DO NOT complete milestone_phase yet - wait for academic stats and awards
 
-Automatic Phase Transition
-When you receive the message "BEGIN_INTERMEDIATE_PHASE", immediately start asking intermediate goal questions without any acknowledgment or transition text. Go straight to your first intermediate goal question. 
+Academic Stats Analysis Protocol
+When student provides their academic stats (formatted with numbers and descriptions), you must:
+1. Provide a very brief (2-3 sentences) analysis of how these achievements support their goals
+2. THEN ask: "What awards have you received or competitions you've won that demonstrate your achievements?"
+3. DO NOT complete milestone_phase yet - wait for awards
 
-Phase 1 Completion Signal
-Once you have identified 1-3 milestone goals AND analyzed their extracurricular activities, send a SINGLE MESSAGE with only this signal:
-<PHASE_COMPLETE>MILESTONE_PHASE</PHASE_COMPLETE>
+Awards Analysis Protocol
+When student provides their awards (formatted with numbers and descriptions), you must:
+1. Provide a very brief (2-3 sentences) analysis of how these awards demonstrate their capabilities
+2. Call update_todo to mark "milestone_phase" as "completed"
+3. Continue with intermediate goal identification in the same response
+
+Phase 1 Completion
+Once you have identified 1-3 milestone goals AND analyzed their extracurricular activities AND academic stats AND awards:
+1. Call update_todo(todoId: "milestone_phase", updates: {status: "completed"})
+2. Immediately continue with intermediate goal identification in the same response
 
 Phase 2: Intermediate Goal Identification
 <system-reminder> Focus on identifying 5-7 intermediate goals from the strict category list below. </system-reminder>
@@ -141,7 +201,10 @@ startup_experience
 certification_earn
 technical_skills
 work_experience
-Phase 3 Question Strategy
+
+
+
+Phase 2 Question Strategy
 RESPONSE FORMAT:
 1-2 sentences, maximum 30 words total
 Conversational and specific to their situation
@@ -152,67 +215,49 @@ After 3 questions on same topic → switch to different area
 Explore different intermediate goal areas systematically
 Tailor questions to their milestone goals and extracurriculars
 EXAMPLES: <good-example> "What academic short-term goals are you focusing on this year for your Stanford application?" </good-example>
-<good-example> "What leadership roles are you pursuing to complement your entrepreneurial experience? Do you have goals for where you want to be in a few months?" </good-example> <bad-example> "Impressive leadership experience! Are there any academic competitions or advanced courses you're planning to pursue to further enhance your application?" </bad-example>
+<good-example> "What leadership roles are you pursuing to complement your entrepreneurial experience? Do you have goals for where you want to be in a few months?" </good-example> 
+<bad-example> "Impressive leadership experience! Are there any academic competitions or advanced courses you're planning to pursue to further enhance your application?" </bad-example>
 IMPORTANT: The bad example asks for background information instead of goals. ALWAYS focus on goal identification.
 Phase 2 Completion Criteria
-Continue until you have identified 5-7 distinct intermediate goals from the strict category list. Then send a SINGLE MESSAGE with only this signal:
-<PHASE_COMPLETE>INTERMEDIATE_PHASE</PHASE_COMPLETE>
+Continue until you have identified 5-7 distinct intermediate goals from the strict category list. Then:
+1. Call update_todo(todoId: "intermediate_phase", updates: {status: "completed"})
+2. Continue with goal extraction and ranking in the same response
 
-Phase 3: Goal Extraction & Ranking
-<system-reminder> Now extract and rank ALL goals identified during the conversation using the binary + stack ranking approach. </system-reminder>
-Extraction Framework
-Analyze the entire conversation and extract goals into 4 hierarchical categories:
-1. MILESTONE_GOALS (From Phase 1 categories) 2. INTERMEDIATE_MILESTONES (From Phase 3 categories) 3. SKILLS (Inferred from interests and goals):
-programming_languages, ai_machine_learning, data_science_analytics, web_development
-advanced_mathematics, statistics_data_analysis, financial_analysis, economics
-biology_mastery, chemistry_mastery, physics_mastery, scientific_method
-public_communication, leadership_management, business_fundamentals, marketing_strategy
-creative_writing, technical_writing, graphic_design, user_experience
-foreign_language, debate_argumentation, project_management, sales_skills
+Phase 3: Final Review & Completion
+<system-reminder> Review the conversation and store any remaining goals that haven't been stored yet using store_goal_data. </system-reminder>
+
+GOAL CATEGORIES TO STORE:
+You can store goals in these 4 category types:
+
+1. MILESTONE_GOALS (Long-term goals from Phase 1):
+competitive_university_acceptance, top_20_university_acceptance, top_10_university_acceptance, specialized_program_acceptance, full_scholarship, significant_financial_aid, workforce_entry, service_year, apprenticeship_program, medical_school_path, law_school_path, graduate_school_stem, business_school_path, startup_founding, npo_founding, profitable_business, venture_capital_funding, business_exit, creator_economy
+
+2. INTERMEDIATE_MILESTONES (Short-term goals from Phase 2):
+college_apps_submit, essays_complete, recommendation_letters, interviews_prep, portfolio_create, academic_record_enhancement, standardized_test_achievement, olympiad_improvement, course_rigor, research_project_development, research_publication, lab_experience, conference_present, internship_work_experience, job_shadowing, professional_networking_exploration, olympiad_success, leadership_position_development, club_founding, volunteer_hours, startup_experience, certification_earn, technical_skills, work_experience
+
+3. SKILLS (Inferred from interests and goals):
+programming_languages, ai_machine_learning, data_science_analytics, web_development, advanced_mathematics, statistics_data_analysis, financial_analysis, economics, biology_mastery, chemistry_mastery, physics_mastery, scientific_method, public_communication, leadership_management, business_fundamentals, marketing_strategy, creative_writing, technical_writing, graphic_design, user_experience, foreign_language, debate_argumentation, project_management, sales_skills
+
 4. SECTORS (Inferred from goals and interests):
-software_technology, artificial_intelligence, data_science, cybersecurity_field
-investment_banking_field, quantitative_finance, venture_capital_field, entrepreneurship_business
-medicine_clinical, medicine_research, biomedical_engineering, healthcare_field_entry
-law_corporate, government_policy, nonprofit_sector, consulting
-engineering_fields, environmental_science, creative_industry_entry, education_teaching
-Binary + Stack Ranking Process
-STEP 1 - BINARY DECISION: For each category, decide YES or NO
-YES: Clearly applies based on student responses
-NO: Does not apply or was not mentioned
-STEP 2 - STACK RANKING: For all YES categories, rank 1, 2, 3, etc.
-Lower numbers = higher importance (1 = most important)
-Rank based on how strongly expressed or central to goals
-JSON Output Format
-{
-  "milestone_goals": [
-    {"category_name": "startup_founding", "ranking": 1},
-    {"category_name": "top_10_university_acceptance", "ranking": 2}
-  ],
-  "intermediate_milestones": [
-    {"category_name": "academic_record_enhancement", "ranking": 1},
-    {"category_name": "research_project_development", "ranking": 2}
-  ],
-  "skills": [
-    {"category_name": "programming_languages", "ranking": 1},
-    {"category_name": "business_fundamentals", "ranking": 2}
-  ],
-  "sectors": [
-    {"category_name": "software_technology", "ranking": 1}
-  ]
-}
+software_technology, artificial_intelligence, data_science, cybersecurity_field, investment_banking_field, quantitative_finance, venture_capital_field, entrepreneurship_business, medicine_clinical, medicine_research, biomedical_engineering, healthcare_field_entry, law_corporate, government_policy, nonprofit_sector, consulting, engineering_fields, environmental_science, creative_industry_entry, education_teaching
 
-IMPORTANT: Only include categories that get a YES decision. Use ranking numbers (1, 2, 3...) not percentages.
-Phase 3 Completion Signal
-After outputting the JSON, send a SINGLE MESSAGE with only this signal:
-<PHASE_COMPLETE>EXTRACTION_PHASE</PHASE_COMPLETE>
+RANKING GUIDELINES:
+- Ranking 1 = most important/central to their goals
+- Ranking 2 = second most important
+- Ranking 3+ = additional relevant goals
+- Only store goals that clearly apply based on student responses
 
-Phase 4: Completion Phase
+Phase 3 Completion:
+1. Store any remaining goals using store_goal_data
+2. Call update_todo(todoId: "end_phase", updates: {status: "completed"})
+3. Provide a brief closing statement
+
+Final Phase: Completion
 Final Response Protocol
 Provide a brief closing statement acknowledging the goal identification process is complete.
 EXAMPLE: "Perfect! I've identified your key goals across all areas. This gives us a clear picture of your academic and career objectives."
-Final Completion Signal
-End with a SINGLE MESSAGE containing only the completion code:
-<SESSION_COMPLETE>GOAL_IDENTIFICATION_FINISHED</SESSION_COMPLETE>
+Final Completion
+The session is automatically completed when all todos are marked as "completed".
 
 Critical Operating Instructions
 Conversation Flow Control
@@ -221,7 +266,8 @@ NEVER skip phases or work out of order
 NEVER give advice, suggestions, or recommendations
 NEVER create goal categories outside the strict lists
 ALWAYS focus questions on goal identification, not background
-ALWAYS signal phase transitions with the required codes
+ALWAYS use update_todo to mark phase completion
+ALWAYS provide conversational responses after tool calls
 Response Guidelines
 Keep responses concise (1-2 sentences maximum)
 Be conversational but focused on goal extraction
@@ -234,8 +280,10 @@ COMMON MISTAKES TO AVOID:
 Asking about background instead of goals
 Creating new goal categories
 Giving advice or recommendations
-Skipping phase completion signals
+Forgetting to use update_todo for phase completion
 Working on multiple phases simultaneously
+🚨 CRITICAL ERROR: Ending responses with only tool calls (ALWAYS include conversational text)
+🚨 CRITICAL ERROR: Not asking follow-up questions after tool calls
 Target Audience
 This system is designed for ambitious high school students interested in:
 Prestigious university admissions
@@ -247,12 +295,13 @@ Leadership and extracurricular excellence
 IMPORTANT: Stay focused on goal identification. Let the student guide the conversation content while you guide the process structure.
 
 System Reminders
-<system-reminder> Remember: You are a goal identification agent, not an advice-giving counselor. Your success is measured by how effectively you extract and categorize student goals through focused questioning. </system-reminder> <system-reminder> Phase discipline is critical. Complete each phase fully before moving to the next. Use the completion signals to maintain proper workflow control. </system-reminder> <system-reminder> The goal categories are fixed and cannot be modified. If a student mentions goals that don't fit the categories, find the closest match or note it for the skills/sectors inference in Phase 4. </system-reminder>
+<system-reminder> Remember: You are a goal identification agent, not an advice-giving counselor. Your success is measured by how effectively you extract and categorize student goals through focused questioning. </system-reminder> <system-reminder> Phase discipline is critical. Complete each phase fully before moving to the next. Use update_todo to maintain proper workflow control and always provide conversational responses. </system-reminder> <system-reminder> The goal categories are fixed and cannot be modified. If a student mentions goals that don't fit the categories, find the closest match or note it for the skills/sectors inference in the final phase. </system-reminder> <system-reminder> 🚨 CRITICAL: You MUST provide conversational text responses after calling tools. NEVER send only tool calls without text. Always ask questions or make statements to continue the conversation. </system-reminder>
 
 
 `
-// Store active sessions (simplified)
+// Store active sessions (simplified) and todo states
 const activeSessions = new Map();
+const sessionTodos = new Map();
 
 // Simplified session helper
 async function getSession(sessionId) {
@@ -276,8 +325,6 @@ async function getSession(sessionId) {
                     studentAge: data.age,
                     studentLocation: data.location,
                     studentHighschool: data.highschool,
-                    studentGpa: data.gpa,
-                    studentSatAct: data.sat_act,
                     conversationHistory: data.conversation_history || [],
                     phase: data.phase || 'milestone_identification'
                 };
@@ -384,9 +431,25 @@ async function getConversationResponse(sessionId, userInput, isFirstMessage = fa
         const session = await getSession(sessionId);
         if (!session) throw new Error('Session not found');
 
-        // Build conversation context
+        // Get current todos for context
+        const todos = getTodos(sessionId);
+        const currentTodo = getCurrentTodo(sessionId);
+        
+        // Build conversation context with todo information
+        const todoContext = `
+CURRENT TODO STATUS:
+${todos.map(todo => `- ${todo.id}: ${todo.content} [${todo.status.toUpperCase()}]`).join('\n')}
+
+CURRENT ACTIVE TODO: ${currentTodo ? `${currentTodo.id} - ${currentTodo.content}` : 'None'}
+
+You have access to these tools:
+1. update_todo: Call this to update todo status when you complete a phase
+2. Always provide conversational responses in addition to tool calls
+3. You MUST respond with text after calling any tools
+`;
+        
         const messages = [
-            { role: 'system', content: UNIFIED_GOAL_COUNSELOR_PROMPT }
+            { role: 'system', content: UNIFIED_GOAL_COUNSELOR_PROMPT + '\n\n' + todoContext }
         ];
 
         // Add conversation history
@@ -399,47 +462,250 @@ async function getConversationResponse(sessionId, userInput, isFirstMessage = fa
             messages.push({ role: 'user', content: userInput });
         }
 
+        // Define available tools for the model
+        const tools = [
+            {
+                type: "function",
+                function: {
+                    name: "update_todo",
+                    description: "Update the status of a todo item to track progress through phases",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            todoId: {
+                                type: "string",
+                                description: "The ID of the todo to update (milestone_phase, intermediate_phase, end_phase)",
+                                enum: ["milestone_phase", "intermediate_phase", "end_phase"]
+                            },
+                            updates: {
+                                type: "object",
+                                properties: {
+                                    status: {
+                                        type: "string",
+                                        description: "New status for the todo",
+                                        enum: ["pending", "in_progress", "completed"]
+                                    }
+                                },
+                                required: ["status"]
+                            }
+                        },
+                        required: ["todoId", "updates"]
+                    }
+                }
+            },
+            {
+                type: "function",
+                function: {
+                    name: "store_goal_data",
+                    description: "Store identified goals and categories directly to the database with rankings",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            category_type: {
+                                type: "string",
+                                description: "The type of category being stored",
+                                enum: ["milestone_goals", "intermediate_milestones", "skills", "sectors"]
+                            },
+                            category_name: {
+                                type: "string",
+                                description: "The specific category name from the predefined lists"
+                            },
+                            ranking: {
+                                type: "integer",
+                                description: "Ranking of importance (1 = most important, 2 = second most important, etc.)",
+                                minimum: 1
+                            }
+                        },
+                        required: ["category_type", "category_name", "ranking"]
+                    }
+                }
+            }
+        ];
+
         // Make API call to OpenAI
         const response = await openai.chat.completions.create({
             model: 'gpt-4o',
             messages: messages,
             max_tokens: 400,
             temperature: 0.3,
+            tools: tools,
+            tool_choice: "auto",
             stream: !!sendSSE  // Stream if SSE callback provided
         });
 
         let aiResponse = '';
+        let toolCalls = [];
         
         if (sendSSE) {
             // Handle streaming response
-        for await (const chunk of response) {
-            const content = chunk.choices[0]?.delta?.content || '';
-            if (content) {
-                aiResponse += content;
-                sendSSE({
-                    type: 'content',
-                    content: content
-                });
-            }
+            for await (const chunk of response) {
+                const choice = chunk.choices[0];
+                const content = choice?.delta?.content || '';
+                const toolCallDeltas = choice?.delta?.tool_calls;
+                
+                if (content) {
+                    aiResponse += content;
+                    sendSSE({
+                        type: 'content',
+                        content: content
+                    });
+                }
+                
+                // Handle tool call deltas in streaming
+                if (toolCallDeltas) {
+                    for (const toolCallDelta of toolCallDeltas) {
+                        const index = toolCallDelta.index;
+                        if (!toolCalls[index]) {
+                            toolCalls[index] = {
+                                id: toolCallDelta.id || '',
+                                type: 'function',
+                                function: { name: '', arguments: '' }
+                            };
+                        }
+                        
+                        if (toolCallDelta.function?.name) {
+                            toolCalls[index].function.name += toolCallDelta.function.name;
+                        }
+                        if (toolCallDelta.function?.arguments) {
+                            toolCalls[index].function.arguments += toolCallDelta.function.arguments;
+                        }
+                    }
+                }
             }
         } else {
             // Handle regular response
-            aiResponse = response.choices[0].message.content;
+            const choice = response.choices[0];
+            aiResponse = choice.message.content || '';
+            toolCalls = choice.message.tool_calls || [];
+        }
+        
+        // Process tool calls if any
+        let toolResults = [];
+        let toolsWereUsed = false;
+        if (toolCalls && toolCalls.length > 0) {
+            toolsWereUsed = true;
+            for (const toolCall of toolCalls) {
+                if (toolCall.function.name === 'update_todo') {
+                    try {
+                        const args = JSON.parse(toolCall.function.arguments);
+                        const updatedTodos = updateTodo(sessionId, args.todoId, args.updates);
+                        toolResults.push({
+                            tool_call_id: toolCall.id,
+                            role: 'tool',
+                            content: JSON.stringify({
+                                success: true,
+                                message: `Todo ${args.todoId} updated to ${args.updates.status}`,
+                                todos: updatedTodos,
+                                currentTodo: getCurrentTodo(sessionId)
+                            })
+                        });
+                        
+                        console.log(`📋 Todo updated: ${args.todoId} -> ${args.updates.status}`);
+                    } catch (error) {
+                        console.error('Error processing update_todo:', error);
+                        toolResults.push({
+                            tool_call_id: toolCall.id,
+                            role: 'tool',
+                            content: JSON.stringify({
+                                success: false,
+                                error: error.message
+                            })
+                        });
+                    }
+                } else if (toolCall.function.name === 'store_goal_data') {
+                    try {
+                        const args = JSON.parse(toolCall.function.arguments);
+                        await storeGoalData(sessionId, args.category_type, args.category_name, args.ranking);
+                        toolResults.push({
+                            tool_call_id: toolCall.id,
+                            role: 'tool',
+                            content: JSON.stringify({
+                                success: true,
+                                message: `Stored ${args.category_type}: ${args.category_name} (ranking: ${args.ranking})`
+                            })
+                        });
+                        
+                        console.log(`💾 Goal data stored: ${args.category_type} -> ${args.category_name} (rank: ${args.ranking})`);
+                    } catch (error) {
+                        console.error('Error processing store_goal_data:', error);
+                        toolResults.push({
+                            tool_call_id: toolCall.id,
+                            role: 'tool',
+                            content: JSON.stringify({
+                                success: false,
+                                error: error.message
+                            })
+                        });
+                    }
+                }
+            }
         }
 
-        // Handle phase signals and extraction
-        const phaseChanged = handlePhaseSignals(aiResponse, session);
+        // If tools were used and we have minimal text response, trigger auto follow-up
+        if (toolsWereUsed && (!aiResponse || aiResponse.trim().length < 10)) {
+            console.log('🔄 Tools used with minimal text - triggering auto follow-up');
+            
+            // Store the current interaction first
+            if (!isFirstMessage && userInput) {
+                session.conversationHistory.push({ role: 'user', content: userInput });
+            }
+            
+            if (toolCalls.length > 0) {
+                session.conversationHistory.push({ 
+                    role: 'assistant', 
+                    content: aiResponse || '',
+                    tool_calls: toolCalls 
+                });
+                session.conversationHistory.push(...toolResults);
+            }
+
+            // Auto-prompt for conversational response
+            const autoPrompt = "Thanks for using the tools! Now please respond to the user conversationally without using any tools.";
+            console.log('🤖 Auto-prompting for conversational response');
+            
+            // Recursively call the same function with the auto-prompt
+            const followUpResult = await getConversationResponse(sessionId, autoPrompt, false, sendSSE);
+            
+            return {
+                message: followUpResult.message,
+                phase: session.phase,
+                phaseChanged: false,
+                todos: getTodos(sessionId),
+                currentTodo: getCurrentTodo(sessionId),
+                toolCalls: toolCalls.length > 0 ? toolCalls : null
+            };
+        }
+
+        // Phase transitions are now handled by todo updates, not signals
+        const phaseChanged = false;
         
         // Store conversation
         if (!isFirstMessage && userInput) {
             session.conversationHistory.push({ role: 'user', content: userInput });
         }
-        session.conversationHistory.push({ role: 'assistant', content: aiResponse });
+        
+        // Store tool calls in conversation history if any
+        if (toolCalls && toolCalls.length > 0) {
+            session.conversationHistory.push({ 
+                role: 'assistant', 
+                content: aiResponse,
+                tool_calls: toolCalls 
+            });
+            // Add tool results to conversation history
+            if (toolResults.length > 0) {
+                session.conversationHistory.push(...toolResults);
+            }
+        } else {
+            session.conversationHistory.push({ role: 'assistant', content: aiResponse });
+        }
 
         return {
             message: aiResponse,
             phase: session.phase,
-            phaseChanged
+            phaseChanged,
+            todos: getTodos(sessionId),
+            currentTodo: getCurrentTodo(sessionId),
+            toolCalls: toolCalls.length > 0 ? toolCalls : null
         };
 
     } catch (error) {
@@ -515,6 +781,128 @@ function extractDataFromResponse(aiResponse, session) {
 }
 
 // ================================================================================================
+// TODO MANAGEMENT FUNCTIONS
+// ================================================================================================
+
+/**
+ * Initialize todo list for a new session
+ */
+function initializeTodos(sessionId) {
+    const defaultTodos = [
+        {
+            id: 'milestone_phase',
+            content: 'Identify milestone goals and analyze extracurriculars, academic stats, and awards',
+            status: 'in_progress'
+        },
+        {
+            id: 'intermediate_phase',
+            content: 'Identify intermediate goals and next steps',
+            status: 'pending'
+        },
+        {
+            id: 'end_phase',
+            content: 'Extract and rank all goals, provide final analysis',
+            status: 'pending'
+        }
+    ];
+    
+    sessionTodos.set(sessionId, defaultTodos);
+    return defaultTodos;
+}
+
+/**
+ * Get current todos for a session
+ */
+function getTodos(sessionId) {
+    if (!sessionTodos.has(sessionId)) {
+        return initializeTodos(sessionId);
+    }
+    return sessionTodos.get(sessionId);
+}
+
+/**
+ * Update a specific todo item
+ */
+function updateTodo(sessionId, todoId, updates) {
+    const todos = getTodos(sessionId);
+    const todoIndex = todos.findIndex(todo => todo.id === todoId);
+    
+    if (todoIndex === -1) {
+        throw new Error(`Todo with id ${todoId} not found`);
+    }
+    
+    // Update the todo
+    todos[todoIndex] = { ...todos[todoIndex], ...updates };
+    
+    // If marking as completed, update next todo to in_progress
+    if (updates.status === 'completed') {
+        const nextTodoIndex = todoIndex + 1;
+        if (nextTodoIndex < todos.length && todos[nextTodoIndex].status === 'pending') {
+            todos[nextTodoIndex].status = 'in_progress';
+        }
+    }
+    
+    sessionTodos.set(sessionId, todos);
+    return todos;
+}
+
+/**
+ * Get current active todo
+ */
+function getCurrentTodo(sessionId) {
+    const todos = getTodos(sessionId);
+    return todos.find(todo => todo.status === 'in_progress') || null;
+}
+
+/**
+ * Store goal data directly to database
+ */
+async function storeGoalData(sessionId, categoryType, categoryName, ranking) {
+    const session = await getSession(sessionId);
+    if (!session || !session.studentId) {
+        throw new Error('Session or student ID not found');
+    }
+
+    if (!supabase) {
+        console.warn('⚠️ Supabase not configured, cannot store goal data');
+        return;
+    }
+
+    // Map category types to database table names
+    const tableMapping = {
+        'milestone_goals': 'milestone_goals',
+        'intermediate_milestones': 'intermediate_milestones', 
+        'skills': 'skills',
+        'sectors': 'sectors'
+    };
+
+    const tableName = tableMapping[categoryType];
+    if (!tableName) {
+        throw new Error(`Invalid category type: ${categoryType}`);
+    }
+
+    try {
+        // Store the goal data with ranking
+        const { error } = await supabase
+            .from(tableName)
+            .upsert({
+                student_id: session.studentId,
+                category_name: categoryName,
+                percentage: ranking // Using percentage field to store ranking
+            }, { onConflict: 'student_id,category_name' });
+
+        if (error) {
+            throw error;
+        }
+
+        console.log(`✅ Stored ${categoryType}: ${categoryName} (ranking: ${ranking}) for student ${session.studentId}`);
+    } catch (error) {
+        console.error(`❌ Error storing goal data:`, error);
+        throw error;
+    }
+}
+
+// ================================================================================================
 // HELPER FUNCTIONS
 // ================================================================================================
 
@@ -560,8 +948,6 @@ async function extractStudentDataToFile(session) {
                 age: session.studentAge,
                 location: session.studentLocation,
                 highschool: session.studentHighschool,
-                gpa: session.studentGpa,
-                sat_act: session.studentSatAct,
                 session_date: new Date().toISOString(),
                 conversation_structure: 'Unified Goal Identification System'
             },
@@ -600,6 +986,46 @@ async function extractStudentDataToFile(session) {
 }
 
 // Routes
+
+// Todo management endpoints
+app.get('/api/todos/:sessionId', async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+        const todos = getTodos(sessionId);
+        
+        res.json({
+            success: true,
+            todos: todos,
+            currentTodo: getCurrentTodo(sessionId)
+        });
+    } catch (error) {
+        console.error('Error getting todos:', error);
+        res.status(500).json({ error: 'Failed to get todos' });
+    }
+});
+
+app.post('/api/todos/:sessionId/update', async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+        const { todoId, updates } = req.body;
+        
+        if (!todoId || !updates) {
+            return res.status(400).json({ error: 'todoId and updates are required' });
+        }
+        
+        const updatedTodos = updateTodo(sessionId, todoId, updates);
+        
+        res.json({
+            success: true,
+            todos: updatedTodos,
+            currentTodo: getCurrentTodo(sessionId),
+            message: `Todo ${todoId} updated successfully`
+        });
+    } catch (error) {
+        console.error('Error updating todo:', error);
+        res.status(500).json({ error: error.message || 'Failed to update todo' });
+    }
+});
 
 // Test endpoint to verify server is running
 app.get('/api/test', (req, res) => {
@@ -669,7 +1095,7 @@ app.post('/api/start-interview', async (req, res) => {
 // Student basic info form submission
 app.post('/api/submit-basic-info', async (req, res) => {
     try {
-        const { name, age, location, highschool, gpa, satAct } = req.body;
+        const { name, age, location, highschool } = req.body;
         
         if (!name || !age || !location) {
             return res.status(400).json({ error: 'Name, age, and location are required' });
@@ -684,8 +1110,6 @@ app.post('/api/submit-basic-info', async (req, res) => {
                 age: age,
                 location: location,
                 highschool: highschool || null,
-                gpa: gpa ? parseFloat(gpa) : null,
-                satscore: satAct || null,
                 exploration_openness: 'medium'
             }])
             .select();
@@ -702,13 +1126,14 @@ app.post('/api/submit-basic-info', async (req, res) => {
             studentAge: age,
             studentLocation: location,
             studentHighschool: highschool,
-            studentGpa: gpa,
-            studentSatAct: satAct,
             conversationHistory: [],
             phase: 'milestone_identification'
         };
 
         activeSessions.set(sessionId, session);
+        
+        // Initialize todos for this session
+        initializeTodos(sessionId);
 
         // Get first response using unified system
         const result = await getConversationResponse(sessionId, "", true);
@@ -717,7 +1142,9 @@ app.post('/api/submit-basic-info', async (req, res) => {
             sessionId,
             studentId,
             message: result.message,
-            phase: result.phase
+            phase: result.phase,
+            todos: result.todos,
+            currentTodo: result.currentTodo
         });
 
     } catch (error) {
@@ -748,6 +1175,9 @@ app.post('/api/send-message', async (req, res) => {
         res.json({
             message: result.message,
             phase: result.phase,
+            todos: result.todos,
+            currentTodo: result.currentTodo,
+            toolCalls: result.toolCalls,
             sessionInfo: {
                 studentName: session.studentName,
                 conversationLength: session.conversationHistory.length
@@ -809,7 +1239,10 @@ app.post('/api/send-message-stream', async (req, res) => {
         sendSSE({
             type: 'complete',
             message: result.message,
-            phase: result.phase
+            phase: result.phase,
+            todos: result.todos,
+            currentTodo: result.currentTodo,
+            toolCalls: result.toolCalls
         });
 
         res.end();
@@ -846,6 +1279,66 @@ app.get('/api/status/:sessionId', async (req, res) => {
     });
 });
 
+// Get stored goals for a session
+app.get('/api/get-stored-goals/:sessionId', async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+        const session = await getSession(sessionId);
+        
+        if (!session) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+
+        if (!supabase) {
+            return res.json({
+                success: true,
+                goals: {
+                    milestone_goals: [],
+                    intermediate_milestones: [],
+                    skills: [],
+                    sectors: []
+                }
+            });
+        }
+
+        try {
+            // Fetch all goal data from database
+            const [milestoneGoals, intermediateGoals, skills, sectors] = await Promise.all([
+                supabase.from('milestone_goals').select('*').eq('student_id', session.studentId).order('percentage', { ascending: true }),
+                supabase.from('intermediate_milestones').select('*').eq('student_id', session.studentId).order('percentage', { ascending: true }),
+                supabase.from('skills').select('*').eq('student_id', session.studentId).order('percentage', { ascending: true }),
+                supabase.from('sectors').select('*').eq('student_id', session.studentId).order('percentage', { ascending: true })
+            ]);
+
+            res.json({
+                success: true,
+                goals: {
+                    milestone_goals: milestoneGoals.data || [],
+                    intermediate_milestones: intermediateGoals.data || [],
+                    skills: skills.data || [],
+                    sectors: sectors.data || []
+                }
+            });
+
+        } catch (dbError) {
+            console.error('Database error:', dbError);
+            res.json({
+                success: true,
+                goals: {
+                    milestone_goals: [],
+                    intermediate_milestones: [],
+                    skills: [],
+                    sectors: []
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Error getting stored goals:', error);
+        res.status(500).json({ error: 'Failed to get stored goals' });
+    }
+});
+
 // Get student data for summary
 app.get('/api/get-student-data/:sessionId', async (req, res) => {
     try {
@@ -861,9 +1354,7 @@ app.get('/api/get-student-data/:sessionId', async (req, res) => {
                 name: session.studentName,
                 age: session.studentAge,
                 location: session.studentLocation,
-                highschool: session.studentHighschool,
-                gpa: session.studentGpa,
-                sat_act: session.studentSatAct
+                highschool: session.studentHighschool
             },
             identified_milestones: session.identifiedMilestones || [],
             extracurriculars: session.extracurriculars || [],
@@ -907,9 +1398,7 @@ app.post('/api/generate-summary/:sessionId', async (req, res) => {
                 name: session.studentName,
                 age: session.studentAge,
                 location: session.studentLocation,
-                highschool: session.studentHighschool,
-                gpa: session.studentGpa,
-                sat_act: session.studentSatAct
+                highschool: session.studentHighschool
             },
             conversation_length: session.conversationHistory.length,
             phase: session.phase,
